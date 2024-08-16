@@ -1,0 +1,1222 @@
+{
+	"info": {
+		"_postman_id": "45bcb637-f5d1-434a-bb88-e3351a39c0db",
+		"name": "TEST.MAAQ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33984753"
+	},
+	"item": [
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"email\": \"john@gmail.com\",\r\n    \"password\": \"john\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/signup",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxMTYyMDM1MiwiZXhwIjoxNzExNjYzNTUyfQ.eyJ1c2VyX2lkIjoiRUtRLTg4OTU3NDc5In0.gcFYh33K96RQUYgRuNmDzZW7gPC_ekMquhIaAtypJIgZYCqiBF1lXeZORa3T1kaziyiVN-2z-TSlBcsBm22FdA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // \"email\": \"johnsmith@gmail.com\",\r\n    \"email\": \"admin@app.com\",\r\n    // \"password\": \"!Password123\"\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin/google",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxMTYyMDM1MiwiZXhwIjoxNzExNjYzNTUyfQ.eyJ1c2VyX2lkIjoiRUtRLTg4OTU3NDc5In0.gcFYh33K96RQUYgRuNmDzZW7gPC_ekMquhIaAtypJIgZYCqiBF1lXeZORa3T1kaziyiVN-2z-TSlBcsBm22FdA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idToken\": \"token\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://backend.mvpdemo.info/signin/google",
+					"protocol": "https",
+					"host": [
+						"backend",
+						"mvpdemo",
+						"info"
+					],
+					"path": [
+						"signin",
+						"google"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxMTYyMDU5OSwiZXhwIjoxNzExNjYzNzk5fQ.eyJ1c2VyX2lkIjoiRUtRLTg4OTU3NDc5In0.g2v0LDIgg46N5YAKQXbqYhJ3mam1P_UtdX2dQNkOdS_dtDaYsoDD_WGaoi_z8HQCsZx78unvmCAFz62OYKstXw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"EKQ-88957479\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/logout",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addPaymentPlan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1NjQxOSwiZXhwIjoxNzE5Njk5NjE5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.Q8l-8kpTyFjFnR0VukahduPV4IZeWckMJg5_PWPKttoEOFD2hBTFaqtrKlD8pjAM1BqH3-tCXEULKFQur9AlSQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Subscription_Plan\": {\r\n        \"Name\": \"Standardss\",\r\n        \"Price\": 200,\r\n        \"Description\": \"This is the description.\"  // New field\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/addPaymentPlan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"addPaymentPlan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fecthPaymentPlans",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1ODYzOSwiZXhwIjoxNzE5NzAxODM5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.08JPBnwFGqk8fZgYisf1VWIj9ZbphdrCOkCVPfxUqg1qb4Cp0OtEtwqdOxKoE99pgpA28wXCaSmBv8yFRKd36w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/fetchPaymentPlans",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"fetchPaymentPlans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatePaymentPlan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1ODYzOSwiZXhwIjoxNzE5NzAxODM5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.08JPBnwFGqk8fZgYisf1VWIj9ZbphdrCOkCVPfxUqg1qb4Cp0OtEtwqdOxKoE99pgpA28wXCaSmBv8yFRKd36w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Plan_Name\": \"Standard\",\r\n    \"Price\": 200,\r\n    \"Description\": \"This is the Description\",\r\n    \"isActive\": \"Y\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/updatePaymentPlan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"updatePaymentPlan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deletePaymentPlan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxNTI1NjY4MywiZXhwIjoxNzE1Mjk5ODgzfQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.DaG-ove8Y7aawcfgcmKd1FG0HRxrdozsmu0z2g3fxAehwfI9fo7p7gZKseraAxnMXoabiuEKaSbwyAeQZpG7BQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Plan_Name\": \"Standard\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/deletePaymentPlan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"deletePaymentPlan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createPromotions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxNTI1NjY4MywiZXhwIjoxNzE1Mjk5ODgzfQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.DaG-ove8Y7aawcfgcmKd1FG0HRxrdozsmu0z2g3fxAehwfI9fo7p7gZKseraAxnMXoabiuEKaSbwyAeQZpG7BQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Code\": \"70OFF\",\r\n    \"Validity\": \"2024-06-01\",\r\n    \"OffPercentage\": 70,\r\n    \"Plan\": \"Standard\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/createPromotions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"createPromotions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "promotions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxNTI1NjY4MywiZXhwIjoxNzE1Mjk5ODgzfQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.DaG-ove8Y7aawcfgcmKd1FG0HRxrdozsmu0z2g3fxAehwfI9fo7p7gZKseraAxnMXoabiuEKaSbwyAeQZpG7BQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/promotions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"promotions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deletePromotions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxNTI1NjY4MywiZXhwIjoxNzE1Mjk5ODgzfQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.DaG-ove8Y7aawcfgcmKd1FG0HRxrdozsmu0z2g3fxAehwfI9fo7p7gZKseraAxnMXoabiuEKaSbwyAeQZpG7BQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Code\": \"70OFF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/deletePromotions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"deletePromotions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createPayment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxNTI1NjY4MywiZXhwIjoxNzE1Mjk5ODgzfQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.DaG-ove8Y7aawcfgcmKd1FG0HRxrdozsmu0z2g3fxAehwfI9fo7p7gZKseraAxnMXoabiuEKaSbwyAeQZpG7BQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"Code\": \"70OFF\",\r\n    \"Plan\": \"Standard\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/createPayment",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"createPayment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addQuestion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxMTYyNTc5NywiZXhwIjoxNzExNjY4OTk3fQ.eyJ1c2VyX2lkIjoiRUtRLTg4OTU3NDc5In0.AmOjDiiwbRspuR5VAslK93Fl6apGfMKEsN0agovV3kUAcYboRmVADKwI14uhL1kZnk-dD3UQLTF9hw8We9E2HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"EKQ-88957479\",\r\n    \"question\": {\r\n        \"Advanced or Basic Topic and Chapter\": \"Basic 15. Central and Peripheral Nervous System\",\r\n        \"Keywords\": \"Physician Impairment or Disability\",\r\n        \"Question Text\": \"One of the most common causes of physician impairment iss\",\r\n        \"Answer A\": \"Uncontrolled depression\",\r\n        \"Answer B\": \"General anxiety\",\r\n        \"Answer C\": \"Old age\",\r\n        \"Answer D\": \"Substance use disorder\",\r\n        \"Correct Answer (letter only)\": \"D\",\r\n        \"Answer A ~ Explanation on why answer is correct or incorrect\": \"A is incorrect. Depression are usually undiagnosed among physicians due to the reluctance to admit any mental illness among health care workers. Its prevalence among anesthesiologists is unreported.\",\r\n        \"Answer B ~ Explanation on why answer is correct or incorrect\": \"B is incorrect. Like any other psychiatric illness, it is less common than substance use disorder as it is less reported.\",\r\n        \"Answer C ~ Explanation on why answer is correct or incorrect\": \"C is incorrect. Old age is not a disability but the effects brought about by physiologic changes of aging can hamper an anesthesiologist's ability to practice safely. According to a study by Katz et al., 22% of the studies reported no association or improved performancewith age for some or all of the outcomes studied.\",\r\n        \"Answer D ~ Explanation on why answer is correct or incorrect\": \"D is correct. The majority of occurrences of impairment are caused by SUD. According to estimates, up to 15% of doctors in practice will experience problems regarding SUD during some point in their career.\",\r\n        \"Bottom Line Summary\": \"SUD accounts for the greatest number of cases of impairment among physicians.\",\r\n        \"Reference(s)\": \"Katz, Jonathan D.. The impaired and/or disabled anesthesiologist. Current Opinion in Anaesthesiology: April 2017 - Volume 30 - Issue 2 - p 217-223\",\r\n        \"Pubmed ID for each citation\": \"30521222\",\r\n        \"Contributor Initials\": \"TEST\" //Use TEST while Testing the endpoint\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/addQuestion",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"addQuestion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addQuestionsBulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"johnsmith@gmail.com\",\r\n    \"password\": \"!Password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/addQuestionsBulk",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"addQuestionsBulk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "questionSearch",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg0OTQ3MCwiZXhwIjoxNzE5ODkyNjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.-vcI_1jO5ZdtuKiUdMD6mnoyPsgyULXAC8_GzVnDKKTsPRoQzDyK-bVUFnA1NbTFLiYJU-fi17u03uRs4Sqftg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\", //Compulsary\r\n    \"keywordsList\": [ //Optional\r\n        \"Physician Impairment or Disability\",\r\n        \"Neurological disorders, acetylcholinesterase inhibitors\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/questionSearch",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"questionSearch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resetQuestionState",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"XGR-93330723\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://testing.maaqdocplus.com/resetQuestionState",
+					"protocol": "https",
+					"host": [
+						"testing",
+						"maaqdocplus",
+						"com"
+					],
+					"path": [
+						"resetQuestionState"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "readyTest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"EKQ-88957479\", //Compulsary\r\n    \"testName\": \"Test 116\", //Compulsary\r\n    \"testType\": \"TUTOR\",\r\n    \"questionsCount\": 2, //Compulsary\r\n    \"questionStateList\": [\r\n        \"New\",\r\n        \"Correct\",\r\n        \"Incorrect\"\r\n    ] //Compulsary\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/readyTest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"readyTest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createCustomTest",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg0OTQ3MCwiZXhwIjoxNzE5ODkyNjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.-vcI_1jO5ZdtuKiUdMD6mnoyPsgyULXAC8_GzVnDKKTsPRoQzDyK-bVUFnA1NbTFLiYJU-fi17u03uRs4Sqftg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\",\r\n    \"testName\": \"Test 16\",\r\n    \"questionsIdList\": [\r\n        12,\r\n        32,\r\n        13,\r\n        67,\r\n        24\r\n    ],\r\n    \"testType\": \"TUTOR\",\r\n    \"testTime\": \"04:30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/createCustomTest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"createCustomTest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "resumeTest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"EKQ-88957479\",\r\n    \"userTestID\": \"T21002\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/resumeTest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"resumeTest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "submitResult",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"EKQ-88957479\", //Compulsary            \r\n    \"userTestID\": \"T21002\", //Compulsary\r\n    \"questionChoices\": [ //Compulsary\r\n        {\r\n            \"QuestionID\": 35,\r\n            \"Correct\": \"B\",\r\n            \"Choice\": \"B\"\r\n        },\r\n        {\r\n            \"QuestionID\": 36,\r\n            \"Correct\": \"B\",\r\n            \"Choice\": \"B\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/submitResult",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"submitResult"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "saveTest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"EKQ-88957479\", //Compulsary            \r\n    \"userTestID\": \"T21002\", //Compulsary\r\n    \"questionChoices\": [ //Compulsary\r\n        // {\r\n        //     \"QuestionID\": 915,\r\n        //     \"Correct\": \"C\",\r\n        //     \"Choice\": \"B\"\r\n        // },\r\n        {\r\n            \"QuestionID\": 35,\r\n            \"Correct\": \"B\",\r\n            \"Choice\": \"B\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/saveTest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"saveTest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "results",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/results",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"results"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetchProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1ODYzOSwiZXhwIjoxNzE5NzAxODM5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.08JPBnwFGqk8fZgYisf1VWIj9ZbphdrCOkCVPfxUqg1qb4Cp0OtEtwqdOxKoE99pgpA28wXCaSmBv8yFRKd36w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/fetchProfile",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"fetchProfile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg0OTQ3MCwiZXhwIjoxNzE5ODkyNjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.-vcI_1jO5ZdtuKiUdMD6mnoyPsgyULXAC8_GzVnDKKTsPRoQzDyK-bVUFnA1NbTFLiYJU-fi17u03uRs4Sqftg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\",\r\n    \"new_email\": \"johnsmith@gmail.com\",  // Optional\r\n    \"new_name\": \"John Smith\"     // Optionl\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/updateProfile",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"updateProfile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "toggleUserStatus",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg1NjM2OSwiZXhwIjoxNzE5ODk5NTY5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.fVrZzUyzxPfQDixMU6i8GMcx4vPJq615Y_I7BmtSqSFYumuzip6eblXv7c-Q1uATSo3bxRhhvooK8xMMJHn5uw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"user_to_toggle\": \"VFU-46664631\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/toggleUserStatus",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"toggleUserStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatePassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\",\r\n    \"old_password\": \"!Password123\",\r\n    \"new_password\": \"!Password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/updatePassword",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"updatePassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createUpdateNote",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg0OTQ3MCwiZXhwIjoxNzE5ODkyNjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.-vcI_1jO5ZdtuKiUdMD6mnoyPsgyULXAC8_GzVnDKKTsPRoQzDyK-bVUFnA1NbTFLiYJU-fi17u03uRs4Sqftg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\",\r\n    \"questionID\": 1,\r\n    \"userTestID\": \"T21016\",\r\n    \"topic\": \"This is the topic\",\r\n    \"description\": \"This is the description.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/createUpdateNote",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"createUpdateNote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getNotes",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg0OTQ3MCwiZXhwIjoxNzE5ODkyNjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.-vcI_1jO5ZdtuKiUdMD6mnoyPsgyULXAC8_GzVnDKKTsPRoQzDyK-bVUFnA1NbTFLiYJU-fi17u03uRs4Sqftg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/getNotes",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"getNotes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteNote",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY3MTMzNSwiZXhwIjoxNzE5NzE0NTM1fQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.BnlLPdXI9cf1BZ3AVF9o1RJY2BsWBQ2nt9TR3lUZcvz2Qfk9DS8qqS3eiQgGoQnJktgzVifiD21PPyl5WOxIFw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/deleteNote/9",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"deleteNote",
+						"9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetchUsers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1NjQxOSwiZXhwIjoxNzE5Njk5NjE5fQ.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.Q8l-8kpTyFjFnR0VukahduPV4IZeWckMJg5_PWPKttoEOFD2hBTFaqtrKlD8pjAM1BqH3-tCXEULKFQur9AlSQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/fetchUsers",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"fetchUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getFinancials",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTY1NTE2NCwiZXhwIjoxNzE5Njk4MzY0fQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.VF0Kbfbuv_VjPpCUVWev_iwQhJl5uO5B6xqez7IcY49bAbJhQLfFr-su5Bvb21_2R0KUB8r41KJALpSAKEpUhQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"VFU-46664631\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://backend.mvpdemo.info/fetchUsers",
+					"protocol": "https",
+					"host": [
+						"backend",
+						"mvpdemo",
+						"info"
+					],
+					"path": [
+						"fetchUsers"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzUxMiIsImlhdCI6MTcxOTg1NjA3MCwiZXhwIjoxNzE5ODk5MjcwfQ.eyJ1c2VyX2lkIjoiVkZVLTQ2NjY0NjMxIn0.cOx96RdbvYu_USj3DQSggCUvnqjb1NWMWEj4-H9e3XOvPOrrbs7nw61JBSjbDzPtppfJpBDeZe093NzsbrF3RQ",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Basic reset */
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+  }
+
+  /* Basic styles */
+  body {
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    @apply bg-slate-200;
+  }
+
+  /* Custom class for main content */
+  .main {
+    min-height: calc(100dvh - 70px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Scrollbar styles */
+  .scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-md bg-primary-200 hover:bg-primary-200/80 active:bg-primary-200/60;
+  }
+}
+
+@layer utilities {
+  .form {
+    @apply mx-auto mb-16 w-[100%] rounded-md border-2 p-5 shadow-xl sm:p-10 md:w-[500px];
+  }
+
+  .full-height {
+    min-height: calc(100dvh - 70px);
+  }
+}
+
+.animate-fade {
+  animation: animate 1s infinite;
+}
+
+@keyframes animate {
+  0% {
+    scale: 0.5;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+    scale: 1.2;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.slide {
+  transform: translateX(0);
+  transition: all 0.4s;
+  animation: slide-animation 0.3s ease-out;
+}
+
+@keyframes slide-animation {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  border: 5px dotted rgb(25, 56, 50);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 2s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* **************************************** */
+
+.ripple {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  display: block;
+  content: '';
+  border-radius: 9999px;
+  opacity: 1;
+  animation: 3.5s ease 1 forwards ripple-effect;
+}
+
+@keyframes ripple-effect {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(200);
+    opacity: 0.375;
+  }
+  100% {
+    transform: scale(350);
+    opacity: 0;
+  }
+}
+
+.ripple-button > .content {
+  position: relative;
+  z-index: 2;
+}
+
+.Toastify__toast-body {
+  align-items: start;
+}
