@@ -114,3 +114,17 @@ export const toggleUserStatus = catchAsync(async(data)=>{
 
   return res;
 })
+
+
+export const updateUser = catchAsync(async (userData) => {
+  const username = localStorage.getItem('username'); // Get username from localStorage
+  
+  const data = {
+    ...userData,
+    username, // Add username to the request data
+  };
+
+  const res = await API.post('/updateUserAdmin', data);
+  if (res.data.Error) throw Error(res.data.Error);
+  return res.data;
+});

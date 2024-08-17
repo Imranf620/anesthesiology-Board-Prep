@@ -5,44 +5,96 @@ import { useGetUsers } from './useGetUsers';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../../../components/UI/Avatar';
 import PerformanceTable from '../../Performance/PerformanceTable';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Modal from '../../../components/UI/Modal';
-import ConfirmDelete from '../../../components/UI/ConfirmDelete';
 import UserConfirm from './UserConfirm';
+import { updateUser } from '../../../services/apiAdmin';
+import { toast } from 'react-toastify';
 
 const DisplayUserDetails = ({ userId }) => {
   const { users, isLoading } = useGetUsers();
   const navigate = useNavigate();
   const ref = useRef();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editableUser, setEditableUser] = useState(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableUser, setEditableUser] = useState({});
+
+  // Find the user object based on userId
   let user;
   if (users) {
     user = users.usersList.find(usr => usr.username === userId);
   }
+  console.log(user);
 
-  const handleChange = e => {
-    ref.current.click();
-  };
+  // Initialize editableUser when user data changes
+  useEffect(() => {
+    if (user) {
+      setEditableUser({
+        userID: "VFU-46664631",
+        name: user.name || '',
+        email: user.email || '',
+        last_login: user.last_login || '',
+        paymentPlan: user.paymentPlan || '',
+        renewDate: user.renewDate || '',
+        isActive: user.isActive === 'Y' ? 'Y' : 'N',
+        image: user.image || ''
+      });
+    }
+  }, [user]);
 
-  const handleEditClick = () => {
-    setEditableUser(user);
-    setIsEditing(true);
-  };
-
-  const handleSaveClick = () => {
-    // Implement your save logic here
-    console.log('Save:', editableUser);
-    setIsEditing(false);
-  };
-
+  // Handle input changes during editing
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditableUser(prev => ({ ...prev, [name]: value }));
   };
 
-  
+  // Handle checkbox change
+  const handleCheckboxChange = (e) => {
+    setEditableUser(prev => ({ ...prev, isActive: e.target.checked ? 'Y' : 'N' }));
+  };
+
+  // Handle save button click
+  const handleSaveClick = async () => {
+    try {
+      const updatedUser = {
+        username: editableUser.username,
+        name: editableUser.name,
+        email: editableUser.email,
+        activeStatus: editableUser.isActive,
+        image: editableUser.image,
+        last_login: editableUser.last_login,
+        paymentPlan: editableUser.paymentPlan,
+        renewDate: editableUser.renewDate
+      };
+
+      await updateUser(updatedUser); // Send updatedUser object to the API
+      toast.success('User details updated successfully!'); // Success toast
+      setIsEditing(false); // Exit editing mode
+    } catch (error) {
+      toast.error('Failed to update user details.'); // Error toast
+      console.error('Failed to update user:', error);
+    }
+  };
+
+  // Handle edit button click
+  const handleEditClick = () => {
+    if (user) {
+      setEditableUser({
+        username: user.username,
+        // userID: user.username,
+
+        name: user.name || '',
+        email: user.email || '',
+        last_login: user.last_login || '',
+        paymentPlan: user.paymentPlan || '',
+        renewDate: user.renewDate || '',
+        isActive: user.isActive === 'Y' ? 'Y' : 'N',
+        image: user.image || ''
+      });
+    }
+    setIsEditing(true);
+  };
+
   return (
     <div className="px-2 py-5 md:px-7">
       <Button
@@ -61,36 +113,34 @@ const DisplayUserDetails = ({ userId }) => {
         </div>
       </section>
       <section className="mt-10 flex flex-col gap-8 rounded-xl bg-white px-8 py-10 shadow-lg">
-      <div className="flex items-center justify-between">
-  <h3 className="text-center text-[1.7rem] font-[500]">
-    User Information
-  </h3>
-  <div>
-    {!isEditing && (
-      <Button onClick={handleEditClick} type="button" variant="underline">
-        Edit
-      </Button>
-    )}
-    {isEditing && (
-      <Button onClick={handleSaveClick} type="button" variant="underline">
-        Save
-      </Button>
-    )}
-  </div>
-</div>
+        <div className="flex items-center justify-between">
+          <h3 className="text-center text-[1.7rem] font-[500]">User Information</h3>
+          <div>
+            {!isEditing && (
+              <Button onClick={handleEditClick} type="button" variant="underline">
+                Edit
+              </Button>
+            )}
+            {isEditing && (
+              <Button onClick={handleSaveClick} type="button" variant="underline">
+                Save
+              </Button>
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 gap-5 text-[1.3rem] font-[500] sm:grid-cols-2 md:grid-cols-3">
           <div>
             <label> Name</label>
             {isEditing ? (
               <input
-                name="Name"
-                value={editableUser?.Name || ''}
+                name="name"
+                value={editableUser.name || ''}
                 onChange={handleInputChange}
                 className="w-full border rounded px-2 py-1"
               />
             ) : (
-              <h3 className="text-[1.1rem] font-[400]">{user?.Name}</h3>
+              <h3 className="text-[1.1rem] font-[400]">{user?.name}</h3>
             )}
           </div>
           <div>
@@ -98,7 +148,7 @@ const DisplayUserDetails = ({ userId }) => {
             {isEditing ? (
               <input
                 name="email"
-                value={editableUser?.email || ''}
+                value={editableUser.email || ''}
                 onChange={handleInputChange}
                 className="w-full border rounded px-2 py-1"
               />
@@ -111,7 +161,7 @@ const DisplayUserDetails = ({ userId }) => {
             {isEditing ? (
               <input
                 name="last_login"
-                value={editableUser?.last_login || ''}
+                value={editableUser.last_login || ''}
                 onChange={handleInputChange}
                 className="w-full border rounded px-2 py-1"
               />
@@ -124,7 +174,7 @@ const DisplayUserDetails = ({ userId }) => {
             {isEditing ? (
               <input
                 name="paymentPlan"
-                value={editableUser?.paymentPlan || ''}
+                value={editableUser.paymentPlan || ''}
                 onChange={handleInputChange}
                 className="w-full border rounded px-2 py-1"
               />
@@ -137,7 +187,7 @@ const DisplayUserDetails = ({ userId }) => {
             {isEditing ? (
               <input
                 name="renewDate"
-                value={editableUser?.renewDate || ''}
+                value={editableUser.renewDate || ''}
                 onChange={handleInputChange}
                 className="w-full border rounded px-2 py-1"
               />
@@ -152,17 +202,17 @@ const DisplayUserDetails = ({ userId }) => {
                 <input
                   name="isActive"
                   type="checkbox"
-                  checked={editableUser?.isActive === 'Y'}
-                  onChange={(e) => setEditableUser(prev => ({ ...prev, isActive: e.target.checked ? 'Y' : 'N' }))}
+                  checked={editableUser.isActive === 'Y'}
+                  onChange={handleCheckboxChange}
                   className="h-4 w-4 accent-primary-500"
                 />
               ) : (
                 <input
-                  onChange={handleChange}
-                  checked={user.isActive === 'Y'}
+                  checked={user?.isActive === 'Y'}
                   id="active"
                   type="checkbox"
                   className="h-4 w-4 accent-primary-500"
+                  readOnly
                 />
               )}
               <label htmlFor="active">Active</label>
@@ -182,7 +232,7 @@ const DisplayUserDetails = ({ userId }) => {
         </div>
       </section>
       <section className="mt-10 flex flex-col rounded-xl bg-white px-8 py-10 shadow-lg">
-        <h3 className="text-[1.7rem] font-[500] flex justify-start">User Results</h3>
+        <h3 className="text-center text-[1.7rem] font-[500]">User Results</h3>
         <PerformanceTable
           results={user?.resultList}
           isLoading={isLoading}

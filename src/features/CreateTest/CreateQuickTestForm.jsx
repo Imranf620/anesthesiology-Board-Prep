@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import Button from "../../components/UI/Button";
-import { useCreateTest } from "./useCreateTest";
-import { useQuizContext } from "../../context/QuizContext";
-import { toast } from "react-toastify";
-import { useGetResults } from "../Dashboard/useGetResults";
-import { useGetProfile } from "../Authentication/useGetProfile";
+import Button from '../../components/UI/Button';
+import { useCreateTest } from './useCreateTest';
+import { useQuizContext } from '../../context/QuizContext';
+import { toast } from 'react-toastify';
+import { useGetResults } from '../Dashboard/useGetResults';
+import { useGetProfile } from '../Authentication/useGetProfile';
+import { FaInfoCircle } from 'react-icons/fa';
 
-const TEST_TYPES = ["timed", "untimed", "tutor"];
+const TEST_TYPES = ['timed', 'untimed', 'tutor'];
 
 const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
-  const [testType, setTestType] = useState("");
+  const [testType, setTestType] = useState('');
   const [checkedOptions, setCheckedOptions] = useState({
     New: false,
     Correct: false,
@@ -29,33 +30,33 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   const { profile } = useGetProfile();
 
   // Handle Checked options
-  const handleCheckbox = (e) => {
+  const handleCheckbox = e => {
     setError(null);
     const { name, checked } = e.target;
     setCheckedOptions({ ...checkedOptions, [name]: checked });
   };
 
   // Handle form submittion (create test/quiz)
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     // Take out the selected keywords ['New','Correct','Incorrect']
     const questionType = Object.keys(checkedOptions).filter(
-      (typ) => checkedOptions[typ]
+      typ => checkedOptions[typ],
     );
 
     // If no question type is selected return error
     if (!questionType.length) {
-      return setError("Please select Question Type");
+      return setError('Please select Question Type');
     }
 
     // If no test type is selected return error
     if (!testType) {
-      return setError("Please select Test Type");
+      return setError('Please select Test Type');
     }
 
     // Data to create a quiz/test
     const data = {
-      username: localStorage.getItem("username"),
+      username: localStorage.getItem('username'),
       testName: testNameRef.current.value,
       testType: testType.toUpperCase(),
       questionsCount: +numOfQuestionsRef.current.value,
@@ -64,29 +65,29 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
 
     // Create test/quiz function
     createTest(data, {
-      onSuccess: (data) => {
+      onSuccess: data => {
         onCloseSidebar?.();
         toast.success(
-          "Test created successfully, you will be redirected in a second!",
-          { autoClose: 2000 }
+          'Test created successfully, you will be redirected in a second!',
+          { autoClose: 2000 },
         );
         setTimeout(() => {
           navigate(
-            `/take-quiz?questionOrder=0&questionId=${data.data.questions[0].QuestionID}`
+            `/take-quiz?questionOrder=0&questionId=${data.data.questions[0].QuestionID}`,
           );
         }, 2000);
-        data.data.status === "in progress";
+        data.data.status === 'in progress';
         data.data.new = true;
         setQuiz(data.data);
       },
-      onError: (err) => {
+      onError: err => {
         toast.error(err.message, { autoClose: false });
       },
     });
   };
 
   // handler function to set the test type
-  const handleTestType = (typ) => {
+  const handleTestType = typ => {
     setTestType(typ);
   };
 
@@ -95,24 +96,24 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
     const date = new Date();
     const defaultTestName = `T${String(results?.length + 1).padStart(
       2,
-      0
-    )}-${profile?.Name.split(" ").join("-")}-${date.toLocaleDateString(
-      "en-US"
+      0,
+    )}-${profile?.Name.split(' ').join('-')}-${date.toLocaleDateString(
+      'en-US',
     )}`;
     setDefaultName(defaultTestName);
   }, [results, profile, setDefaultName]);
 
   // Styles
-  const labelClasses = "font-[500] text-xl";
+  const labelClasses = 'font-[500] text-xl';
   const inputClasses = `outline-none py-2 px-3 rounded-md border-2  text-black ${
     quickTest
-      ? "focus:border-primary-200 border-transparent"
-      : "focus:border-gray-500 border-gray-200"
+      ? 'focus:border-primary-200 border-transparent'
+      : 'focus:border-gray-500 border-gray-200'
   }`;
 
   // Checkbox classes
   const inputCheckboxClasses =
-    "h-5 w-5 text-primary-300 transition duration-150 ease-in-out cursor-pointer accent-primary-300";
+    'h-5 w-5 text-primary-300 transition duration-150 ease-in-out cursor-pointer accent-primary-300';
 
   return (
     <form
@@ -120,7 +121,7 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       className={
         formClasses
           ? formClasses
-          : "flex flex-col gap-7 h-[70%] w-full px-4 overflow-y-auto scrollbar pb-6"
+          : 'scrollbar flex h-[70%] w-full flex-col gap-7 overflow-y-auto px-4 pb-6'
       }
     >
       {/* Test Name */}
@@ -136,17 +137,25 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       </div>
       {/* Test type */}
       <div className="flex flex-col gap-2">
-        <label className={labelClasses}>Test Type</label>
-        <ul className="flex  text-black rounded-md overflow-hidden text-[0.9rem]">
-          {TEST_TYPES.map((typ) => (
+        <div className="flex items-center gap-2">
+          <label className={labelClasses}>Test Type</label>
+          <FaInfoCircle
+            className="cursor-pointer"
+            title={`Timed Test: A test with a fixed time limit for completion.
+Untimed Test: A test with no time restrictions, allowing completion at one's own pace.
+Tutor Test: A guided test type, often used for learning, with real-time feedback or assistance.`}
+          />
+        </div>
+        <ul className="flex  overflow-hidden rounded-md text-[0.9rem] text-black">
+          {TEST_TYPES.map(typ => (
             <li
               key={typ}
               onClick={() => handleTestType(typ)}
-              className={`py-2 px-3 flex-1 capitalize text-center  cursor-pointer ${
+              className={`flex-1 cursor-pointer px-3 py-2 text-center  capitalize ${
                 typ === testType
-                  ? "bg-primary-400 text-white"
+                  ? 'bg-primary-400 text-white'
                   : ` hover:bg-gray-200 ${
-                      quickTest ? "bg-white" : "bg-gray-100"
+                      quickTest ? 'bg-white' : 'bg-gray-100'
                     }`
               }`}
             >
@@ -161,13 +170,13 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
         <label className={labelClasses}>Number of Questions</label>
         <input
           ref={numOfQuestionsRef}
-          onFocus={(e) =>
+          onFocus={e =>
             e.target.addEventListener(
-              "wheel",
+              'wheel',
               function (e) {
                 e.preventDefault();
               },
-              { passive: false }
+              { passive: false },
             )
           }
           type="number"
@@ -225,17 +234,17 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       </div>
       <div className="flex flex-col gap-2">
         {error && (
-          <span className="text-red-500/90 text-[0.8rem] text-center">
+          <span className="text-center text-[0.8rem] text-red-500/90">
             {error}
           </span>
         )}
         <Button
           className={
             quickTest
-              ? "border-2 border-white rounded-3xl hover:border-white py-2 hover:bg-gray-100/10"
-              : ""
+              ? 'rounded-3xl border-2 border-white py-2 hover:border-white hover:bg-gray-100/10'
+              : ''
           }
-          variant={quickTest ? "outline" : "dark"}
+          variant={quickTest ? 'outline' : 'dark'}
           type="submit"
           disabled={isLoading}
           isLoading={isLoading}
