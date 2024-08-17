@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useSearchResultContext } from "../../context/SearchResultContext";
-import QuestionsResultFilter from "./QuestionsResultFilter";
-import Table from "../../components/UI/Table";
-import { useQueryClient } from "@tanstack/react-query";
-import LoadingSpinner from "../../components/UI/LoadingSpinner";
-import DisplayQuestionsItem from "./DisplayQuestionsItem";
-import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
-import Button from "../../components/UI/Button";
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useSearchResultContext } from '../../context/SearchResultContext';
+import QuestionsResultFilter from './QuestionsResultFilter';
+import Table from '../../components/UI/Table';
+import { useQueryClient } from '@tanstack/react-query';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import DisplayQuestionsItem from './DisplayQuestionsItem';
+import { HiArrowLeft, HiArrowRight } from 'react-icons/hi';
+import Button from '../../components/UI/Button';
 
 const DisplayQuestions = ({ admin }) => {
   const {
@@ -20,7 +20,8 @@ const DisplayQuestions = ({ admin }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const queryClient = useQueryClient();
   const totalResults = state.searchResults.length;
-  
+  const [resultData, setResultData] = useState([]);
+
   const [checkedOptions, setCheckedOptions] = useState(() =>
     admin
       ? {
@@ -35,20 +36,59 @@ const DisplayQuestions = ({ admin }) => {
           chapter: true,
           Keywords: true,
           Questions: true,
-        }
+        },
   );
+
   // Take out the type either 'all question' or 'selected'
-  const questionsType = searchParams.get("questions");
+  const questionsType = searchParams.get('questions');
+  const status = searchParams.get('status');
+  const [statusValue, setStatusValue] = useState('');
+
+  useEffect(() => {
+    if (status) {
+      const statuses = status.split(',');
+      let isActive = [];
+
+      // Determine the active statuses based on query parameters
+      if (statuses.includes('active') && statuses.includes('inactive')) {
+        // Show all statuses (no filter)
+        isActive = [];
+      } else if (statuses.includes('active')) {
+        // Show only active
+        isActive = ['Y'];
+      } else if (statuses.includes('inactive')) {
+        // Show only inactive
+        isActive = ['N'];
+      }
+
+  
+      // Filter the data based on the determined statuses
+      const filteredData = isActive.length > 0
+        ? state.searchResults.filter(data => {
+      
+            return isActive.includes(data.isActive);
+          })
+        : state.searchResults;
+
+      setResultData(filteredData);
+    } else {
+      // No status filter applied, show all results
+      setResultData(state.searchResults);
+    }
+    
+    // Ensure the resultData is logged correctly
+
+  }, [status, state.searchResults]);
 
   // Num of pages
   let numOfPages;
-  if (questionsType === "allQuestions" || questionsType === undefined) {
+  if (questionsType === 'allQuestions' || questionsType === undefined) {
     if (state.filteredData?.length > 0) {
       numOfPages = Math.ceil(state.filteredData.length / 10);
     } else {
-      numOfPages = Math.ceil(state.searchResults.length / 10);
+      numOfPages = Math.ceil(resultData.length / 10);
     }
-  } else if (questionsType === "selected") {
+  } else if (questionsType === 'selected') {
     numOfPages = Math.ceil(state.selectedData.length / 10);
   }
 
@@ -56,83 +96,79 @@ const DisplayQuestions = ({ admin }) => {
   // Slice the data from the array according to the page
   const dataSlice = currentPage - 1;
   let data;
-  if (state.filteredData.length > 0) {
+  if (questionsType === 'selected') {
+    data = state.selectedData.slice(dataSlice * 10, currentPage * 10);
+  } else if (state.filteredData.length > 0) {
     data = state.filteredData.slice(dataSlice * 10, currentPage * 10);
   } else if (state.filteredData.length === 0 && state.filterExact) {
     data = [];
   } else {
-    data = state.searchResults.slice(dataSlice * 10, currentPage * 10);
-  }
-  if (questionsType === "selected") {
-    data = state.selectedData.slice(dataSlice * 10, currentPage * 10);
+    data = resultData.slice(dataSlice * 10, currentPage * 10);
   }
 
-  // function to hanlde rows of the table
-  const handleCheckboxChange = (event) => {
+  // Function to handle rows of the table
+  const handleCheckboxChange = event => {
     const { id, checked } = event.target;
     setCheckedOptions({ ...checkedOptions, [id]: checked });
   };
 
-  // funtion to add or remove the questions
+  // Function to add or remove the questions
   const handleSelectQuestion = (event, question) => {
     if (event.target.checked) {
       setSelectedData(question);
-    }
-    if (!event.target.checked) {
+    } else {
       removeSelectedData(question.id);
     }
   };
 
-  // function to handle pages
-  const handlePages = (next) => {
+  // Function to handle pages
+  const handlePages = next => {
     if (!next) {
       if (currentPage === 1) return;
-      return setCurrentPage((prev) => prev - 1);
+      setCurrentPage(prev => prev - 1);
+    } else {
+      if (currentPage === numOfPages) return;
+      setCurrentPage(prev => prev + 1);
     }
-    if (currentPage === numOfPages) return;
-    return setCurrentPage((prev) => prev + 1);
   };
-
-  
 
   // Table Headers
   const headers = Object.keys(checkedOptions).filter(
-    (opt) => checkedOptions[opt] === true
+    opt => checkedOptions[opt] === true,
   );
 
- 
-
-  // Reset current page to one when changing btw all questions and selected
+  // Reset current page to one when changing between all questions and selected
   useEffect(() => {
     setCurrentPage(1);
   }, [questionsType, state.filteredData]);
 
-  // If the data is not arrived refetch
+  // If the data is not arrived, refetch
   useEffect(() => {
     if (state.searchResults.length === 0) {
-      queryClient.fetchQuery({ queryKey: ["all-questions"] });
+      queryClient.fetchQuery({ queryKey: ['all-questions'] });
     }
   }, [state.searchResults, queryClient]);
 
   return (
-    <section className="bg-white pb-10 px-3">
+    <section className="bg-white px-3 pb-10">
       {/* Result Filter */}
       <QuestionsResultFilter
         checkedOptions={checkedOptions}
         onCheckboxChange={handleCheckboxChange}
+        admin={admin}
       />
 
       {/* Data Table */}
-      <div className="min-w-[300px] overflow-hidden max-h-[80dvh] w-full mx-auto border-2 border-gray-400 rounded-lg">
-        <div className="w-full max-h-[70dvh] overflow-auto">
-          <Table className="w-full overflow-auto border-collapse">
+      <div className="mx-auto max-h-[80dvh] w-full min-w-[300px] overflow-hidden rounded-lg border-2 border-gray-400">
+        <div className="max-h-[70dvh] w-full overflow-auto">
+          <Table className="w-full border-collapse overflow-auto">
             <Table.Head>
-              <Table.Row className="sticky top-0 bg-gray-200 z-0">
-                <th className="text-start px-3 py-2 capitalize">
+              <Table.Row className="sticky top-0 z-0 bg-gray-200">
+                <th className="px-3 py-2 text-start capitalize">
                   Serial Number
                 </th>
-                {headers.map((header) => (
-                  <th className="text-start px-3 py-2 capitalize" key={header}>
+                {headers.map(header => (
+                  <th className="px-3 py-2 text-start capitalize" key={header}>
                     {header}
                   </th>
                 ))}
@@ -140,7 +176,7 @@ const DisplayQuestions = ({ admin }) => {
             </Table.Head>
             <Table.Body>
               {data.length > 0 &&
-                data.map((dta) => (
+                data.map(dta => (
                   <Table.Row key={dta?.id}>
                     <Table.Data>
                       <div className="flex items-center gap-2">
@@ -148,7 +184,6 @@ const DisplayQuestions = ({ admin }) => {
                           question={dta}
                           handleSelectQuestion={handleSelectQuestion}
                         />
-
                         {dta.id}
                       </div>
                     </Table.Data>
@@ -158,13 +193,13 @@ const DisplayQuestions = ({ admin }) => {
                     {checkedOptions.chapter && (
                       <Table.Data>{dta?.Chapter}</Table.Data>
                     )}
-                     {checkedOptions.Keywords && (
+                    {checkedOptions.Keywords && (
                       <Table.Data>{dta?.Keywords}</Table.Data>
                     )}
-                    {checkedOptions.Questions && (
+                    {(checkedOptions.Questions || checkedOptions.statement) && (
                       <Table.Data
                         className={`${
-                          dta?.Statement?.length > 60 ? "text-[0.8rem]" : ""
+                          dta?.Statement?.length > 60 ? 'text-[0.8rem]' : ''
                         }`}
                       >
                         {dta?.Statement}
@@ -172,7 +207,7 @@ const DisplayQuestions = ({ admin }) => {
                     )}
                     {admin && checkedOptions.status && (
                       <Table.Data>
-                        {dta.isActive === "Y" ? "Active" : "Not Active"}
+                        {dta.isActive === 'Y' ? 'Active' : 'Not Active'}
                       </Table.Data>
                     )}
                     {admin && checkedOptions.edit && (
@@ -183,7 +218,7 @@ const DisplayQuestions = ({ admin }) => {
                           link
                           to={`edit-question/${dta.id}`}
                         >
-                          Edit{" "}
+                          Edit{' '}
                         </Button>
                       </Table.Data>
                     )}
@@ -194,37 +229,37 @@ const DisplayQuestions = ({ admin }) => {
         </div>
         {/* When no results were found */}
         {data.length === 0 && !isLoading && (
-          <div className="flex justify-center my-16">No result found!</div>
+          <div className="my-16 flex justify-center">No result found!</div>
         )}
 
         {isLoading && (
-          <div className="flex justify-center my-16">
+          <div className="my-16 flex justify-center">
             <LoadingSpinner />
           </div>
         )}
 
         {/* Pagination */}
-        <div className="sticky bottom-0 flex flex-wrap  justify-between items-center py-2 px-3 bg-gray-200">
+        <div className="sticky bottom-0 flex flex-wrap  items-center justify-between bg-gray-200 px-3 py-2">
           <button
             onClick={() => handlePages(false)}
             disabled={!totalResults || currentPage === 1}
-            className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50 py-2 px-3 rounded-md font-[500] flex items-center gap-3 opacity-80"
+            className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 font-[500] opacity-80 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <HiArrowLeft />
             <span>Prev</span>
           </button>
           {/* Current page */}
           <span className="font-[500] text-gray-500">
-            Pages:{" "}
+            Pages:{' '}
             {!totalResults || (!state.filteredData.length && state.filterExact)
-              ? "0"
-              : currentPage}{" "}
+              ? '0'
+              : currentPage}{' '}
             / {numOfPages}
           </span>
           <button
             disabled={!totalResults || currentPage === numOfPages}
             onClick={() => handlePages(true)}
-            className="cursor-pointer disabled:cursor-not-allowed  hover:bg-gray-50 py-2 px-3 rounded-md font-[500] flex items-center gap-3 disabled:opacity-50 opacity-80"
+            className="flex cursor-pointer  items-center gap-3 rounded-md px-3 py-2 font-[500] opacity-80 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span>Next</span> <HiArrowRight />
           </button>

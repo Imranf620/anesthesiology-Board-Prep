@@ -1,11 +1,7 @@
-const PaymentPlanCard = ({ children, className = "" }) => {
-  return (
-    <div
-      className={`h-[500px] p-7 shadow-md bg-white rounded-2xl flex flex-col gap-6 ${className}`}
-    >
-      {children}
-    </div>
-  );
-};
+const PaymentPlanCard = ({ children }) => (
+  <div className="flex flex-col border rounded-2xl shadow-md p-4 h-full  bg-white  gap-6">
+    {children}
+  </div>
+);
 
 export default PaymentPlanCard;
