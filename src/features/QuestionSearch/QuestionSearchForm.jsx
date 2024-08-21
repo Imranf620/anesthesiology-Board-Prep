@@ -24,7 +24,7 @@ const QuestionSearchForm = ({ admin }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" flex justify-between flex-wrap gap-y-5 gap-x-3 items-center pl-7 py-4 bg-slate-100"
+      className="relative flex justify-between flex-wrap gap-y-5 gap-x-3 items-center pl-7 py-4 bg-slate-100"
     >
       <div className="flex flex-wrap md:flex-nowrap flex-1 gap-3">
         <SimpleInput
@@ -72,7 +72,8 @@ const QuestionSearchForm = ({ admin }) => {
             disabled={!keyword || isLoading}
             type="button"
             variant="dark"
-            className="text-[1rem] w-max"
+            // className="text-[1rem] w-max"
+              className="text-[1rem] w-max md:absolute md:right-[35vw] md:top-[87px] "
           >
             Create Test
           </Button>

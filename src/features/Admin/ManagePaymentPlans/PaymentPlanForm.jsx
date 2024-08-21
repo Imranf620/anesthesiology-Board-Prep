@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { HiX } from 'react-icons/hi';
 
 const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
+  console.log(plan);
   const {
     register,
     handleSubmit,
@@ -25,7 +26,7 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
   });
   const { createPlan, isLoading } = useCreatePaymentPlan();
   const { updatePlan, isLoading: isUpdating } = useUpdatePaymentPlan();
-  const [descriptions, setDesctiptions] = useState(
+  const [descriptions, setDescriptions] = useState(
     (edit &&
       plan.Description &&
       plan.Description.split(' \n ').map((itm, i) => ({ id: i, desc: itm }))) ||
@@ -33,66 +34,81 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
   );
 
   const [checked, setChecked] = useState(edit && plan.isActive === 'Y');
+  const [descError, setDescError] = useState('');
 
   const queryClient = useQueryClient();
 
   const handleAddDescriptions = () => {
     const desc = getValues().desc;
     if (!desc) return;
-    setDesctiptions(prev => [...prev, { id: Math.random() * 1000000, desc }]);
+
+    if (descriptions.length >= 6) {
+      setDescError('You can only add up to 6 descriptions.');
+      return;
+    }
+
+    setDescriptions((prev) => [...prev, { id: Math.random() * 1000000, desc }]);
     setValue('desc', '');
+    setDescError('');
   };
 
-  const handleRemoveDesc = id => {
-    setDesctiptions(prev => prev.filter(itm => itm.id !== id));
+  const handleRemoveDesc = (id) => {
+    setDescriptions((prev) => prev.filter((itm) => itm.id !== id));
   };
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     if (!descriptions.length)
-      return toast.error('Please add at least on description', {
+      return toast.error('Please add at least one description', {
         autoClose: 6000,
       });
+
+    const prepareData = {
+      username: localStorage.getItem('username'), // Fetch username from localStorage
+      Plan_Name: data.planName,
+      Price: +data.price,
+      Description: descriptions.map((desc) => desc.desc).join(' \n '), // Combine descriptions
+      isActive: checked ? 'Y' : 'N',
+    };
+
     if (edit) {
-      // If edit than update the plan
+      // If edit then update the plan
       setIsSubmitting?.(true);
-      const prepareData = {
-        username: localStorage.getItem('username'),
-        Plan_Name: data.planName,
-        Price: +data.price,
-        isActive: checked ? 'Y' : 'N',
-      };
       updatePlan(prepareData, {
-        onSuccess: data => {
+        onSuccess: (data) => {
+          console.log('Update Success:', data);
           toast.success(data.data.Message, { autoClose: 5000 });
           queryClient.invalidateQueries({ queryKey: ['payment-plans'] });
           onCloseModal();
         },
-        onError: err => {
+        onError: (err) => {
+          console.error('Update Error:', err);
           toast.error(err.message, { autoClose: 15000 });
         },
         onSettled: () => setIsSubmitting?.(false),
       });
     } else {
-      // If not edit than ceate the plan
+      // If not edit then create the plan
       setIsSubmitting?.(true);
-      const prepareData = {
+      const createData = {
         username: localStorage.getItem('username'),
         Subscription_Plan: {
           Name: data.planName,
           Price: +data.price,
-          Description: descriptions.map(desc => desc.desc).join(' \n '),
+          Description: descriptions.map((desc) => desc.desc).join(' \n '),
         },
       };
-      console.log(prepareData);
-      createPlan(prepareData, {
-        onSuccess: data => {
+      console.log(createData);
+      createPlan(createData, {
+        onSuccess: (data) => {
+          console.log('Create Success:', data);
           toast.success(data.data.Message || data.data.message, {
             autoClose: 5000,
           });
           queryClient.invalidateQueries({ queryKey: ['payment-plans'] });
           onCloseModal();
         },
-        onError: err => {
+        onError: (err) => {
+          console.error('Create Error:', err);
           toast.error(err.message, { autoClose: 15000 });
         },
         onSettled: () => setIsSubmitting?.(false),
@@ -101,7 +117,7 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
   };
 
   return (
-    <div className="h-[70dvh]  w-full overflow-y-auto">
+    <div className="h-[70dvh] w-full overflow-y-auto">
       <h1 className="w-full bg-primary-500 py-3 text-center text-[1.3rem] font-[700] uppercase tracking-wider text-primary-100">
         {edit ? 'Edit' : 'Add'} Payment Plan
       </h1>
@@ -118,6 +134,7 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
           register={register}
           required="Payment Plan is required!"
           error={errors?.planName?.message}
+          disabled={edit}
         />
         {/* Plan price */}
         <Input
@@ -137,6 +154,7 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
             id="desc"
             type="text"
             label="Descriptions"
+            textArea={false}
           />
           <div className="flex justify-end">
             <Button
@@ -147,18 +165,19 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
               Add
             </Button>
           </div>
+          {descError && <span className="text-red-500">{descError}</span>}
         </div>
         {descriptions.length > 0 && (
           <div className="my-2">
             <ul className="flex flex-col gap-3 px-3">
               {descriptions.map((desc, i) => (
                 <li
-                  className="flex items-center justify-between bg-primary-100 px-3 py-2 "
+                  className="flex items-center justify-between bg-primary-100 px-3 py-2"
                   key={i}
                 >
                   <span>{desc.desc}</span>
                   <HiX
-                    className="cursor-pointer text-[1.2rem]  hover:scale-110"
+                    className="cursor-pointer text-[1.2rem] hover:scale-110"
                     onClick={() => handleRemoveDesc(desc.id)}
                   />
                 </li>
@@ -174,7 +193,7 @@ const PaymentPlanForm = ({ edit, plan, onCloseModal, setIsSubmitting }) => {
               className="h-4 w-4 cursor-pointer accent-primary-500"
               type="checkbox"
               id="active"
-              onChange={e => setChecked(e.target.checked)}
+              onChange={(e) => setChecked(e.target.checked)}
               checked={checked}
             />
             <label htmlFor="active" className="cursor-pointer font-[600]">

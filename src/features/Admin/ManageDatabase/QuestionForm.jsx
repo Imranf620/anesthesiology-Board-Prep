@@ -72,11 +72,11 @@ const QuestionForm = ({ question, edit = false }) => {
           reset();
           setQuestionExplanation(false);
           toast.success('Question successfully Added to Database!', {
-            autoClose: 4000,
+            autoClose: 2000,
           });
         },
         onError: err => {
-          toast.error(err.message, { autoClose: 7000 });
+          toast.error(err.message, { autoClose: 2000 });
         },
       });
     } else {

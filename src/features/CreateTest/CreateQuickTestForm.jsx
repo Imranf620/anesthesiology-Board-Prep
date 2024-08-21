@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { FaInfoCircle } from 'react-icons/fa';
 import Button from '../../components/UI/Button';
 import { useCreateTest } from './useCreateTest';
 import { useQuizContext } from '../../context/QuizContext';
 import { toast } from 'react-toastify';
 import { useGetResults } from '../Dashboard/useGetResults';
 import { useGetProfile } from '../Authentication/useGetProfile';
-import { FaInfoCircle } from 'react-icons/fa';
 
 const TEST_TYPES = ['timed', 'untimed', 'tutor'];
 
@@ -21,6 +20,7 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   });
   const [error, setError] = useState(null);
   const [defaultName, setDefaultName] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
   const testNameRef = useRef();
   const numOfQuestionsRef = useRef();
   const { createTest, isLoading } = useCreateTest();
@@ -29,32 +29,26 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   const { results } = useGetResults();
   const { profile } = useGetProfile();
 
-  // Handle Checked options
   const handleCheckbox = e => {
     setError(null);
     const { name, checked } = e.target;
     setCheckedOptions({ ...checkedOptions, [name]: checked });
   };
 
-  // Handle form submittion (create test/quiz)
   const handleSubmit = e => {
     e.preventDefault();
-    // Take out the selected keywords ['New','Correct','Incorrect']
     const questionType = Object.keys(checkedOptions).filter(
       typ => checkedOptions[typ],
     );
 
-    // If no question type is selected return error
     if (!questionType.length) {
       return setError('Please select Question Type');
     }
 
-    // If no test type is selected return error
     if (!testType) {
       return setError('Please select Test Type');
     }
 
-    // Data to create a quiz/test
     const data = {
       username: localStorage.getItem('username'),
       testName: testNameRef.current.value,
@@ -63,7 +57,6 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       questionStateList: questionType,
     };
 
-    // Create test/quiz function
     createTest(data, {
       onSuccess: data => {
         onCloseSidebar?.();
@@ -86,7 +79,6 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
     });
   };
 
-  // handler function to set the test type
   const handleTestType = typ => {
     setTestType(typ);
   };
@@ -103,15 +95,13 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
     setDefaultName(defaultTestName);
   }, [results, profile, setDefaultName]);
 
-  // Styles
   const labelClasses = 'font-[500] text-xl';
-  const inputClasses = `outline-none py-2 px-3 rounded-md border-2  text-black ${
+  const inputClasses = `outline-none py-2 px-3 rounded-md border-2 text-black ${
     quickTest
       ? 'focus:border-primary-200 border-transparent'
       : 'focus:border-gray-500 border-gray-200'
   }`;
 
-  // Checkbox classes
   const inputCheckboxClasses =
     'h-5 w-5 text-primary-300 transition duration-150 ease-in-out cursor-pointer accent-primary-300';
 
@@ -135,23 +125,33 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
           className={inputClasses}
         />
       </div>
+
       {/* Test type */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 relative">
         <div className="flex items-center gap-2">
           <label className={labelClasses}>Test Type</label>
           <FaInfoCircle
             className="cursor-pointer"
-            title={`Timed Test: A test with a fixed time limit for completion.
-Untimed Test: A test with no time restrictions, allowing completion at one's own pace.
-Tutor Test: A guided test type, often used for learning, with real-time feedback or assistance.`}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
           />
+          {showTooltip && (
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full w-full h- mb-2 bg-gray-700 text-white text-sm rounded py-2 px-3">
+              <p className="font-bold">Timed Test:</p>
+              <p>A test with a fixed time limit for completion.</p>
+              <p className="font-bold">Untimed Test:</p>
+              <p>A test with no time restrictions, allowing completion at one's own pace.</p>
+              <p className="font-bold">Tutor Test:</p>
+              <p>A guided test type, often used for learning, with real-time feedback or assistance.</p>
+            </div>
+          )}
         </div>
-        <ul className="flex  overflow-hidden rounded-md text-[0.9rem] text-black">
+        <ul className="flex overflow-hidden rounded-md text-[0.9rem] text-black">
           {TEST_TYPES.map(typ => (
             <li
               key={typ}
               onClick={() => handleTestType(typ)}
-              className={`flex-1 cursor-pointer px-3 py-2 text-center  capitalize ${
+              className={`flex-1 cursor-pointer px-3 py-2 text-center capitalize ${
                 typ === testType
                   ? 'bg-primary-400 text-white'
                   : ` hover:bg-gray-200 ${
@@ -165,7 +165,7 @@ Tutor Test: A guided test type, often used for learning, with real-time feedback
         </ul>
       </div>
 
-      {/* Number of Questons */}
+      {/* Number of Questions */}
       <div className="flex flex-col gap-2">
         <label className={labelClasses}>Number of Questions</label>
         <input

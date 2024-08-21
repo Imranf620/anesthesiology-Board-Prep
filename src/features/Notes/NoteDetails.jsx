@@ -13,7 +13,7 @@ const NoteDetails = ({ note }) => {
 
   const handleSave = async () => {
     if (!note.userTestID) {
-      toast.error('userTestID is missing. Cannot save the note.', { autoClose: 6000 });
+      toast.error('userTestID is missing. Cannot save the note.', { autoClose: 2000 });
       return;
     }
 
@@ -28,11 +28,11 @@ const NoteDetails = ({ note }) => {
       };
 
       await createUpdateNote(updatedNote);
-      toast.success('Note successfully updated!', { autoClose: 4000 });
+      toast.success('Note successfully updated!', { autoClose: 2000 });
       window.location.reload();
       setEditMode(false);
     } catch (error) {
-      toast.error(error.message, { autoClose: 6000 });
+      toast.error(error.message, { autoClose: 2000 });
     }
   };
 

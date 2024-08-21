@@ -45,15 +45,13 @@ const Notes = () => {
         setNotes(res.data.Notes);
         setIsLoading(false);
       } catch (error) {
-        toast.error(error.message, { autoClose: 6000 });
+        toast.error(error.message, { autoClose: 2000 });
         setIsLoading(false);
       }
     };
 
     fetchNotes();
   }, [username]);
-
-  
 
   const handleChange = e => {
     const id = e.target.id;
@@ -76,23 +74,16 @@ const Notes = () => {
   const handleDeleteNote = async id => {
     try {
       await deleteNote(id);  // Use the custom hook
-      toast.success('Note successfully deleted!', { autoClose: 4000 });
+      toast.success('Note successfully deleted!', { autoClose: 2000 });
       setNotes(prevNotes => prevNotes.filter(note => note.questionID !== id));
     } catch (error) {
-      toast.error(error.message, { autoClose: 6000 });
+      toast.error(error.message, { autoClose: 2000 });
     }
   };
 
   const handleGoToQuestion = (quesId, testId) => {
-    const data = {
-      username,
-      userTestID: testId,
-    };
-    // Assuming you have a function to handle quiz resumption
-    // resumeQuiz(data, { ... })
     navigate(`/questions/${quesId}`);
   };
-  
 
   return isLoading ? (
     <div className="my-20 flex justify-center">
@@ -107,7 +98,7 @@ const Notes = () => {
       )}
       <Table className="border-2">
         <Table.Head className="bg-primary-100 text-start text-[1.2rem]">
-          <th className="bg-primary-100 px-5 py-2 text-start">
+          <th className="bg-primary-100 px-4 py-2 text-left w-[15%]">
             <CheckedInput
               id="select-all"
               onChange={handleChange}
@@ -115,10 +106,11 @@ const Notes = () => {
               selected={selected}
             />
           </th>
-          <th className="bg-primary-100">Notes</th>
-          <th className="bg-primary-100">Date Modified</th>
-          <th className="bg-primary-100">View</th>
-          <th className="w-[5%] bg-primary-100"></th>
+          <th className="bg-primary-100 w-[40%]">Notes</th>
+          <th className="bg-primary-100 w-[20%]">Date Modified</th>
+          <th className="bg-primary-100 w-[15%]">Question ID</th>
+          <th className="bg-primary-100 w-[10%]">View</th>
+          <th className="bg-primary-100 w-[10%]"></th>
         </Table.Head>
         <Table.Body>
           {notes.map(itm => (
@@ -131,8 +123,9 @@ const Notes = () => {
                   selected={selected}
                 />
               </Table.Data>
-              <Table.Data className='w-1/2 text-start'>{itm.description}</Table.Data>
-              <Table.Data></Table.Data>
+              <Table.Data className='w-full text-center'>{itm.description}</Table.Data>
+              <Table.Data>{new Date(itm.createdAt).toLocaleDateString()}</Table.Data>
+              <Table.Data className="text-center">{itm.questionID}</Table.Data>
               <Table.Data>
                 <Modal>
                   <Modal.Open id="note">

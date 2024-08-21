@@ -1,8 +1,7 @@
 import { useSearchResultContext } from "../../context/SearchResultContext";
-
-const DisplayQuestionsItem = ({ question, handleSelectQuestion }) => {
+const DisplayQuestionsItem = ({ question, handleSelectQuestion, checked }) => {
   const { state } = useSearchResultContext();
-  const isSelected = state.selectedDataIds.includes(question.id);
+  const isSelected = checked !== undefined ? checked : state.selectedDataIds.includes(question?.id);
 
   return (
     <input

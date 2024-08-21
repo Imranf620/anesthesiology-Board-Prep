@@ -33,7 +33,7 @@ const RecordVideo = ({ onCloseModal }) => {
     if (errorMessage) {
       if (errorMessage && errorMessage === 'NO_USER_PERMISSION') {
         toast.error('No user permission to access camera!', {
-          autoClose: 6000,
+          autoClose: 2000,
         });
 
         await cancelRecording();

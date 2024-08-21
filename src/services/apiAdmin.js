@@ -43,12 +43,13 @@ export const createPaymentPlan = catchAsync(async data => {
   return res;
 });
 
-// Update payment plan
-export const updatePaymentPlan = catchAsync(async data => {
+export const updatePaymentPlan = catchAsync(async (data) => {
   const res = await API.post('/updatePaymentPlan', data);
   if (res.data.Error) throw Error(res.data.Error);
   return res;
 });
+
+
 
 // Delete Payment plan
 export const deletePaymentPlan = catchAsync(async data => {

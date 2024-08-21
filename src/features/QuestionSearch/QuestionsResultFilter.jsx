@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoChevronDownOutline } from 'react-icons/io5';
+
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { useSearchResultContext } from '../../context/SearchResultContext';
 import { useSearchParams } from 'react-router-dom';
@@ -46,57 +47,57 @@ const CheckedInput = ({
   );
 };
 
-const QuestionsResultFilter = ({ onCheckboxChange, checkedOptions, admin }) => {
+const QuestionsResultFilter = ({
+  onCheckboxChange,
+  checkedOptions,
+  setCheckedOptions,
+  admin
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showMenu, setShowMenu] = useState(false);
-  const ref = useOutsideClick(() => setShowMenu(false));
-  const refStatus = useOutsideClick(() => setShowStatus(false));
-
+  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [action, setAction] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
+  const ref = useOutsideClick(() => {
+    setShowMenu(false);
+    setShowActionMenu(false);
+  });
   const { state } = useSearchResultContext();
   const optionsArr = Object.keys(checkedOptions);
 
-  const StatusArr = ['active', 'inactive'];
-  const [selectedStatus, setSelectedStatus] = useState({
-    active: true,
-    inactive: true,
-  });
-  const [showStatus, setShowStatus] = useState(false);
+  const handleSelectedOption = opt => {
+    searchParams.set('questions', opt);
+    setSearchParams(searchParams);
+  };
+
+  const handleAction = () => {
+    // Handle the action here (e.g., update the state or make an API call)
+    console.log(action);
+    setAction('');
+    setShowActionMenu(false);
+  };
+
+  const handleSelectAll = e => {
+    const isChecked = e.target.checked;
+    setSelectAll(isChecked);
+    // Set all options to checked or unchecked
+    const updatedCheckedOptions = optionsArr.reduce((acc, opt) => {
+      acc[opt] = isChecked;
+      return acc;
+    }, {});
+    setCheckedOptions(updatedCheckedOptions);
+  };
 
   useEffect(() => {
-    // Set initial selected statuses in the query string
-    searchParams.set('status', 'active,inactive');
     searchParams.set('questions', 'allQuestions');
     setSearchParams(searchParams);
   }, []);
 
-  const handleStatusChange = (status) => {
-    const isChecked = selectedStatus[status];
-    const updatedStatus = { ...selectedStatus, [status]: !isChecked };
-
-    const selectedCount = Object.values(updatedStatus).filter(Boolean).length;
-
-    if (selectedCount > 2) return; // Prevent selecting more than two statuses
-
-    setSelectedStatus(updatedStatus);
-
-    // Update the query string based on the selected statuses
-    const selectedStatuses = Object.keys(updatedStatus)
-      .filter((key) => updatedStatus[key])
-      .join(',');
-
-    if (selectedCount === 0) {
-      searchParams.delete('status');
-    } else {
-      searchParams.set('status', selectedStatuses);
-    }
-
-    setSearchParams(searchParams);
-  };
-
-  const handleSelectedOption = (opt) => {
-    searchParams.set('questions', opt);
-    setSearchParams(searchParams);
-  };
+  useEffect(() => {
+    // Update select all checkbox state based on individual checkboxes
+    const allChecked = optionsArr.every(opt => checkedOptions[opt]);
+    setSelectAll(allChecked);
+  }, [checkedOptions]);
 
   return (
     <div className="mb-5 flex flex-wrap items-center justify-between gap-y-4 px-10 md:h-[70px]">
@@ -126,42 +127,12 @@ const QuestionsResultFilter = ({ onCheckboxChange, checkedOptions, admin }) => {
         </div>
       </div>
 
-      {/* Status Dropdown */}
       <div className="flex flex-wrap items-center gap-3">
+        {/* Select Columns to show */}
         <div className="relative">
           <button
-            onClick={() => setShowStatus((prev) => !prev)}
-            className="flex w-[15rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
-          >
-            <span>Status</span>
-            <span>
-              <IoChevronDownOutline />
-            </span>
-          </button>
-          {showStatus && (
-            <ul
-              ref={refStatus}
-              className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
-            >
-              {StatusArr.map((status) => (
-                <CheckedInput
-                  key={status}
-                  option={status}
-                  checkedOptions={selectedStatus}
-                  onCheckboxChange={() => handleStatusChange(status)}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-
-      {/* Select Columns to Show */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
-          <button
-            onClick={() => setShowMenu((prev) => !prev)}
-            className="flex w-[15rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
+            onClick={() => setShowMenu(prev => !prev)}
+            className="flex w-[10rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
           >
             <span>Select Columns</span>
             <span>
@@ -173,8 +144,23 @@ const QuestionsResultFilter = ({ onCheckboxChange, checkedOptions, admin }) => {
               ref={ref}
               className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
             >
+              <li className="flex items-center gap-3 px-3 py-2 capitalize hover:bg-primary-200">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  id="select-all"
+                />
+                <label
+                  htmlFor="select-all"
+                  className="flex-1 cursor-pointer text-[1.1rem]"
+                >
+                  Select All
+                </label>
+              </li>
+              <CheckedInput disable={true} option="All Selected" />
               <CheckedInput disable={true} option="Serial Number" />
-              {optionsArr.map((opt) => (
+              {optionsArr.map(opt => (
                 <CheckedInput
                   key={opt}
                   option={opt}
@@ -183,6 +169,46 @@ const QuestionsResultFilter = ({ onCheckboxChange, checkedOptions, admin }) => {
                 />
               ))}
             </ul>
+          )}
+        </div>
+
+        {/* Action Dropdown */}
+       <div className="relative">
+          <button
+            onClick={() => setShowActionMenu(prev => !prev)}
+            className="flex w-[10rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
+          >
+            <span>Actions</span>
+            <span>
+              <IoChevronDownOutline />
+            </span>
+          </button>
+          {showActionMenu && (
+            <div
+              ref={ref}
+              className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
+            >
+              <span
+                onClick={() => setAction('active')}
+                className="px-4 py-2 hover:bg-primary-200"
+              >
+                Make it Active
+              </span>
+              <span
+                onClick={() => setAction('inactive')}
+                className="px-4 py-2 hover:bg-primary-200"
+              >
+                Make it Inactive
+              </span>
+              <div className="mt-2 flex justify-end">
+                <button
+                  onClick={handleAction}
+                  className="bg-primary-500 px-3 py-1 text-sm text-white hover:bg-primary-600"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>

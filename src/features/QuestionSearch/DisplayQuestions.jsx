@@ -18,20 +18,22 @@ const DisplayQuestions = ({ admin }) => {
   } = useSearchResultContext();
   const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
   const queryClient = useQueryClient();
   const totalResults = state.searchResults.length;
-  const [resultData, setResultData] = useState([]);
-
   const [checkedOptions, setCheckedOptions] = useState(() =>
     admin
       ? {
+          // select: true,
           topic: true,
           chapter: true,
+          Keywords: true,
           statement: true,
           status: true,
           edit: true,
         }
       : {
+          // select: true,
           topic: true,
           chapter: true,
           Keywords: true,
@@ -41,44 +43,6 @@ const DisplayQuestions = ({ admin }) => {
 
   // Take out the type either 'all question' or 'selected'
   const questionsType = searchParams.get('questions');
-  const status = searchParams.get('status');
-  const [statusValue, setStatusValue] = useState('');
-
-  useEffect(() => {
-    if (status) {
-      const statuses = status.split(',');
-      let isActive = [];
-
-      // Determine the active statuses based on query parameters
-      if (statuses.includes('active') && statuses.includes('inactive')) {
-        // Show all statuses (no filter)
-        isActive = [];
-      } else if (statuses.includes('active')) {
-        // Show only active
-        isActive = ['Y'];
-      } else if (statuses.includes('inactive')) {
-        // Show only inactive
-        isActive = ['N'];
-      }
-
-  
-      // Filter the data based on the determined statuses
-      const filteredData = isActive.length > 0
-        ? state.searchResults.filter(data => {
-      
-            return isActive.includes(data.isActive);
-          })
-        : state.searchResults;
-
-      setResultData(filteredData);
-    } else {
-      // No status filter applied, show all results
-      setResultData(state.searchResults);
-    }
-    
-    // Ensure the resultData is logged correctly
-
-  }, [status, state.searchResults]);
 
   // Num of pages
   let numOfPages;
@@ -86,7 +50,7 @@ const DisplayQuestions = ({ admin }) => {
     if (state.filteredData?.length > 0) {
       numOfPages = Math.ceil(state.filteredData.length / 10);
     } else {
-      numOfPages = Math.ceil(resultData.length / 10);
+      numOfPages = Math.ceil(state.searchResults.length / 10);
     }
   } else if (questionsType === 'selected') {
     numOfPages = Math.ceil(state.selectedData.length / 10);
@@ -96,40 +60,46 @@ const DisplayQuestions = ({ admin }) => {
   // Slice the data from the array according to the page
   const dataSlice = currentPage - 1;
   let data;
-  if (questionsType === 'selected') {
-    data = state.selectedData.slice(dataSlice * 10, currentPage * 10);
-  } else if (state.filteredData.length > 0) {
+  if (state.filteredData.length > 0) {
     data = state.filteredData.slice(dataSlice * 10, currentPage * 10);
   } else if (state.filteredData.length === 0 && state.filterExact) {
     data = [];
   } else {
-    data = resultData.slice(dataSlice * 10, currentPage * 10);
+    data = state.searchResults.slice(dataSlice * 10, currentPage * 10);
+  }
+  if (questionsType === 'selected') {
+    data = state.selectedData.slice(dataSlice * 10, currentPage * 10);
   }
 
-  // Function to handle rows of the table
-  const handleCheckboxChange = event => {
-    const { id, checked } = event.target;
-    setCheckedOptions({ ...checkedOptions, [id]: checked });
-  };
-
-  // Function to add or remove the questions
-  const handleSelectQuestion = (event, question) => {
-    if (event.target.checked) {
-      setSelectedData(question);
+  // Function to handle the select all checkbox
+  const handleSelectAllChange = event => {
+    const { checked } = event.target;
+    setSelectAllChecked(checked);
+    if (checked) {
+      data.forEach(item => setSelectedData(item));
     } else {
-      removeSelectedData(question.id);
+      data.forEach(item => removeSelectedData(item.id));
     }
   };
 
+  // Function to handle individual row checkbox changes
+  const handleCheckboxChange = (event, question) => {
+    const { checked } = event.target;
+    if (checked) {
+      setSelectedData(question);
+    } else {
+      removeSelectedData(question.id);
+      setSelectAllChecked(false); // Uncheck 'Select All' if any individual checkbox is unchecked
+    }
+  };
   // Function to handle pages
   const handlePages = next => {
     if (!next) {
       if (currentPage === 1) return;
-      setCurrentPage(prev => prev - 1);
-    } else {
-      if (currentPage === numOfPages) return;
-      setCurrentPage(prev => prev + 1);
+      return setCurrentPage(prev => prev - 1);
     }
+    if (currentPage === numOfPages) return;
+    return setCurrentPage(prev => prev + 1);
   };
 
   // Table Headers
@@ -140,14 +110,18 @@ const DisplayQuestions = ({ admin }) => {
   // Reset current page to one when changing between all questions and selected
   useEffect(() => {
     setCurrentPage(1);
+    setSelectAllChecked(false); // Reset the select all checkbox
   }, [questionsType, state.filteredData]);
 
-  // If the data is not arrived, refetch
+  // If the data is not arrived refetch
   useEffect(() => {
     if (state.searchResults.length === 0) {
       queryClient.fetchQuery({ queryKey: ['all-questions'] });
     }
   }, [state.searchResults, queryClient]);
+
+  console.log('Data:', data);
+  console.log('Checked Options:', checkedOptions);
 
   return (
     <section className="bg-white px-3 pb-10">
@@ -165,6 +139,13 @@ const DisplayQuestions = ({ admin }) => {
             <Table.Head>
               <Table.Row className="sticky top-0 z-0 bg-gray-200">
                 <th className="px-3 py-2 text-start capitalize">
+                  <DisplayQuestionsItem
+                    question={{ id: 'selectAll' }}
+                    handleSelectQuestion={handleSelectAllChange}
+                    checked={selectAllChecked}
+                  />
+                </th>
+                <th className="px-3 py-2 text-start capitalize">
                   Serial Number
                 </th>
                 {headers.map(header => (
@@ -174,18 +155,22 @@ const DisplayQuestions = ({ admin }) => {
                 ))}
               </Table.Row>
             </Table.Head>
+
             <Table.Body>
               {data.length > 0 &&
                 data.map(dta => (
-                  <Table.Row key={dta?.id}>
+                  <Table.Row key={`dta?.id`}>
                     <Table.Data>
-                      <div className="flex items-center gap-2">
-                        <DisplayQuestionsItem
-                          question={dta}
-                          handleSelectQuestion={handleSelectQuestion}
-                        />
-                        {dta.id}
-                      </div>
+                      <DisplayQuestionsItem
+                        question={dta}
+                        handleSelectQuestion={handleCheckboxChange}
+                        checked={state.selectedData.some(
+                          item => item.id === dta.id,
+                        )}
+                      />
+                    </Table.Data>
+                    <Table.Data>
+                      <div className="flex items-center gap-2">{dta.id}</div>
                     </Table.Data>
                     {checkedOptions.topic && (
                       <Table.Data>{dta?.Topic}</Table.Data>
@@ -196,13 +181,14 @@ const DisplayQuestions = ({ admin }) => {
                     {checkedOptions.Keywords && (
                       <Table.Data>{dta?.Keywords}</Table.Data>
                     )}
-                    {(checkedOptions.Questions || checkedOptions.statement) && (
+                    {(checkedOptions.Questions || checkedOptions.statement)  && (
                       <Table.Data
                         className={`${
-                          dta?.Statement?.length > 60 ? 'text-[0.8rem]' : ''
+                          dta?.statement?.length > 60 ? 'text-[0.8rem]' : ''
                         }`}
                       >
-                        {dta?.Statement}
+                        {dta.Statement}
+                        
                       </Table.Data>
                     )}
                     {admin && checkedOptions.status && (
@@ -218,7 +204,7 @@ const DisplayQuestions = ({ admin }) => {
                           link
                           to={`edit-question/${dta.id}`}
                         >
-                          Edit{' '}
+                          Edit
                         </Button>
                       </Table.Data>
                     )}
@@ -239,7 +225,7 @@ const DisplayQuestions = ({ admin }) => {
         )}
 
         {/* Pagination */}
-        <div className="sticky bottom-0 flex flex-wrap  items-center justify-between bg-gray-200 px-3 py-2">
+        <div className="sticky bottom-0 flex flex-wrap items-center justify-between bg-gray-200 px-3 py-2">
           <button
             onClick={() => handlePages(false)}
             disabled={!totalResults || currentPage === 1}

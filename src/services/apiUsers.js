@@ -20,16 +20,30 @@ export const getClientSecret = catchAsync(async data => {
 });
 
 
-export const updateProfile = catchAsync(async (profileData) => {
-  const res = await API.post('/updateProfile', profileData);
-  if (res.data.Error) throw Error(res.data.Error);
-  return res.data;
-});
 
+
+export const updateProfile = catchAsync(async (profileData) => {
+  try {
+    console.log('Profile data being sent:', profileData);
+
+    const res = await API.post('/updateProfile', profileData);
+
+    console.log('Response from API:', res.data);
+
+    if (res.data.Error) throw new Error(res.data.Error);
+
+    return res.data;
+  } catch (error) {
+    console.error('Error updating profile:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+});
 
 export const updatePassword = catchAsync(async (data) => {
   const res = await API.post('/updatePassword', data);
   if (res.data.Error) throw Error(res.data.Error);
   return res.data;
 });
+
+
 
