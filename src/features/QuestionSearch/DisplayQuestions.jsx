@@ -83,15 +83,13 @@ const DisplayQuestions = ({ admin }) => {
   };
 
   // Function to handle individual row checkbox changes
-  const handleCheckboxChange = (event, question) => {
-    const { checked } = event.target;
-    if (checked) {
-      setSelectedData(question);
-    } else {
-      removeSelectedData(question.id);
-      setSelectAllChecked(false); // Uncheck 'Select All' if any individual checkbox is unchecked
-    }
-  };
+  const handleCheckboxChange = (event) => {
+    const { id, checked } = event.target;
+    setCheckedOptions(prev => ({
+        ...prev,
+        [id]: checked,
+    }));
+};
   // Function to handle pages
   const handlePages = next => {
     if (!next) {
@@ -104,8 +102,8 @@ const DisplayQuestions = ({ admin }) => {
 
   // Table Headers
   const headers = Object.keys(checkedOptions).filter(
-    opt => checkedOptions[opt] === true,
-  );
+    opt => checkedOptions[opt] === true
+);
 
   // Reset current page to one when changing between all questions and selected
   useEffect(() => {

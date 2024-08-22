@@ -144,20 +144,7 @@ const QuestionsResultFilter = ({
               ref={ref}
               className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
             >
-              <li className="flex items-center gap-3 px-3 py-2 capitalize hover:bg-primary-200">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                  id="select-all"
-                />
-                <label
-                  htmlFor="select-all"
-                  className="flex-1 cursor-pointer text-[1.1rem]"
-                >
-                  Select All
-                </label>
-              </li>
+             
               <CheckedInput disable={true} option="All Selected" />
               <CheckedInput disable={true} option="Serial Number" />
               {optionsArr.map(opt => (

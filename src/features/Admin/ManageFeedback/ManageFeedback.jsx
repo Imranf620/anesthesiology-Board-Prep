@@ -4,9 +4,15 @@ import Heading from "../../../components/UI/Heading";
 import Button from "../../../components/UI/Button.jsx";
 import Table from "../../../components/UI/Table"; // Adjust the import path as needed
 import LoadingSpinner from "../../../components/UI/LoadingSpinner.jsx";
+import { useGetUsers } from "../ManageUsers/useGetUsers.js";
+
 
 const ManageFeedback = () => {
   const { feedback, isLoading, isError } = useGetFeedback();
+  const { users } = useGetUsers();
+  console.log("users", users)
+
+
   const FeedBack = feedback?.Feedback;
   console.log(FeedBack)
   const deleteFeedbackMutation = useDeleteFeedback(); // Use the delete mutation hook

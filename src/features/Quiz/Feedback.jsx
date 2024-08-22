@@ -14,6 +14,7 @@ const Feedback = () => {
     const queryParams = new URLSearchParams(location.search);
     const questionIdFromUrl = queryParams.get('questionId');
     setQuestionId(questionIdFromUrl);
+    
   }, [location]);
 
   const handleFeedbackTypeChange = (e) => {
@@ -30,6 +31,7 @@ const Feedback = () => {
     setFeedbackType('');
     setFeedbackText('');
   };
+  
 
   const handleSubmit = async () => {
     if (!feedbackType || !feedbackText || !questionId) {
@@ -38,7 +40,7 @@ const Feedback = () => {
     }
 
     const feedbackData = {
-      username: localStorage.getItem('username') || 'admin',
+      username: localStorage.getItem('username') ,
       questionID: questionId,
       feedback: feedbackText,
     };
