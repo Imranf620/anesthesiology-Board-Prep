@@ -52,26 +52,26 @@ const PaymentPlansTable = ({ paymentPlans }) => {
                 <Table.Data>{plan.Price}</Table.Data>
                 <Table.Data>{plan.isActive === "Y" ? "Yes" : "No"}</Table.Data>
                 <Table.Data>
-                  <Modal.Open id="edit">
+                  <Modal.Open id={`edit-${plan.Name}`}>
                     <Button type="button" variant="underline">
                       Edit
                     </Button>
                   </Modal.Open>
-                  <Modal.Window id="edit" closeOnOverlay={!isUpdating}>
+                  <Modal.Window id={`edit-${plan.Name}`} closeOnOverlay={!isUpdating}>
                     <PaymentPlanForm
-                      edit
+                      edit={true}
                       plan={plan}
                       setIsSubmitting={setIsUpdating}
                     />
                   </Modal.Window>
                 </Table.Data>
                 <Table.Data>
-                  <Modal.Open id="delete">
+                  <Modal.Open id={`delete-${plan.Name}`}>
                     <Button variant="delete">Delete</Button>
                   </Modal.Open>
-                  <Modal.Window center id="delete" closeOnOverlay={!isLoading}>
+                  <Modal.Window center id={`delete-${plan.Name}`} closeOnOverlay={!isLoading}>
                     <ConfirmDelete
-                      message={`Are you sure you want to delete ${plan.Name} plan? `}
+                      message={`Are you sure you want to delete ${plan.Name} plan?`}
                       onConfirm={() => deletePaymentPlan(plan.Name)}
                       isLoading={isLoading}
                       ref={ref}
