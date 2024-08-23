@@ -85,11 +85,11 @@ const Quiz = ({ takeQuiz }) => {
         <QuizButtons />
       </div>
       <div
-        className={`${showSide ? 'block ' : 'hidden'} relative w-1/2  bg-white px-4 duration-300`}
+        className={`${showSide ? 'block ' : 'hidden'} absolute w-full h-full md:relative  md:w-1/2  bg-white px-4 duration-300`}
       >
         <FaArrowRight
           onClick={() => setShowSide(false)}
-          className={`absolute ${showSide === true ? '' : 'hidden'}  -left-4 top-16 rounded-full bg-gray-200 p-2 text-3xl ring-1 ring-black`}
+          className={`absolute ${showSide === true ? '' : 'hidden'}  left-0 top-12 md:-left-4 md:top-16 rounded-full bg-gray-200 p-2 text-3xl ring-1 ring-black`}
         />
         <Side side={side} Topic={state.questions[questionOrder]?.Topic} questionID={state.questions[questionOrder]?.QuestionID} userTestID={state.quiz?.userTestID} />
 

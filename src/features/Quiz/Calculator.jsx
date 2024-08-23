@@ -55,7 +55,7 @@ const Calculator = () => {
   }, [input, result, memory]);
 
   return (
-    <div className="w-full h-full  flex flex-col bg-white p-4 rounded-lg shadow-lg">
+    <div className="w-full h-full md:py-48 flex flex-col bg-white p-4 rounded-lg shadow-lg">
       <div className="flex w-full flex-col mb-4">
         <input
           type="text"

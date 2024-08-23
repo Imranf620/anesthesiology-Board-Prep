@@ -83,13 +83,31 @@ const DisplayQuestions = ({ admin }) => {
   };
 
   // Function to handle individual row checkbox changes
-  const handleCheckboxChange = (event) => {
-    const { id, checked } = event.target;
+  const handleCheckboxChange = (event, question) => {
+    const { checked, id } = event.target;
     setCheckedOptions(prev => ({
         ...prev,
         [id]: checked,
     }));
+  
+    if (question) {
+        if (checked) {
+            setSelectedData(question);
+        } else {
+            removeSelectedData(question.id); // Remove the question from selectedData
+        }
+    }
 };
+
+  
+
+// const handleCheckboxChange = (event) => {
+//   const { id, checked } = event.target;
+//   setCheckedOptions(prev => ({
+//       ...prev,
+//       [id]: checked,
+//   }));
+// };
   // Function to handle pages
   const handlePages = next => {
     if (!next) {
