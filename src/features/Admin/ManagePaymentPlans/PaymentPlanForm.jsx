@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import Button from '../../../components/UI/Button';
 import PaymentPlanCard from '../../../components/UI/PaymentPlanCard';
 import { useGetPaymentPlans } from '../ManagePaymentPlans/useGetPaymentPlans';
 import FullPageLoading from '../../../components/UI/FullPageLoading';
 import { useCreatePaymentPlan } from './useCreatePaymentPlan';
 import { useUpdatePaymentPlan } from './useUpdatePaymentPlan';
-import { toast } from 'react-toastify';
 
 // EditableText component for inline editing
 const EditableText = ({ value, onSave, editable = true }) => {
@@ -47,9 +46,7 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
     ...initialPlan,
   });
 
-  const [descriptions, setDescriptions] = useState(
-    plan.Description ? plan.Description.split(' \n ') : ['']
-  );
+  const [descriptions, setDescriptions] = useState([]); // Start with no descriptions
 
   const handleAddDescription = () => {
     if (descriptions.length < 6) {
@@ -139,7 +136,7 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
                   className="w-full rounded border px-2 py-1"
                   placeholder="Enter plan name"
                   value={plan.Name}
-                  onChange={(e) => handleNameChange(e.target.value)}
+                  onChange={e => handleNameChange(e.target.value)}
                   autoFocus
                 />
               )}
@@ -169,11 +166,15 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
                 </li>
               ))}
             </ul>
-            {descriptions.length < 6 && (
-              <Button variant="link" type="button" onClick={handleAddDescription}>
-                + Add another description
-              </Button>
-            )}
+            <Button
+              variant="link"
+              type="button"
+              onClick={handleAddDescription}
+              disabled={descriptions.length >= 6 || descriptions.some(desc => desc.trim() === '')}
+              className='disabled:bg-transparent'
+            >
+              { descriptions.length >=1 ? "+ Add another description":"Add Description"}
+            </Button>
             <Button
               variant="dark"
               type="button"
