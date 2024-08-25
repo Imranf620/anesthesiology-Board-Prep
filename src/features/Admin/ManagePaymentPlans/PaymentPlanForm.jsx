@@ -19,13 +19,19 @@ const EditableText = ({ value, onSave, editable = true }) => {
 
   return isEditing ? (
     <input
-      type="text"
-      className="w-full rounded border px-2 py-1"
-      value={text}
-      onChange={e => setText(e.target.value)}
-      onBlur={handleSave}
-      autoFocus
-    />
+    type="number"
+    className="w-full rounded border px-2 py-1"
+    value={text}
+    onChange={e => {
+      const newValue = e.target.value;
+      if (newValue <= 999) {
+        setText(newValue);
+      }
+    }}
+    onBlur={handleSave}
+    max="999" // Set the maximum value to 999
+  />
+  
   ) : (
     <span onClick={() => setIsEditing(true)}>{value}</span>
   );
@@ -88,12 +94,12 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
 
       updatePlan(prepareData, {
         onSuccess: data => {
-          toast.success(data.data.Message, { autoClose: 5000 });
+          toast.success(data.data.Message, { autoClose: 3000 });
           setSubmitting(false);
           setIsSubmitting(false);
         },
         onError: err => {
-          toast.error(err.message, { autoClose: 15000 });
+          toast.error(err.message, { autoClose: 3000 });
           setSubmitting(false);
           setIsSubmitting(false);
         },
@@ -108,12 +114,12 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
 
       createPlan(prepareData, {
         onSuccess: data => {
-          toast.success(data.data.Message || data.data.message, { autoClose: 5000 });
+          toast.success(data.data.Message || data.data.message, { autoClose: 3000 });
           setSubmitting(false);
           setIsSubmitting(false);
         },
         onError: err => {
-          toast.error(err.message, { autoClose: 15000 });
+          toast.error(err.message, { autoClose: 3000 });
           setSubmitting(false);
           setIsSubmitting(false);
         },
@@ -173,7 +179,7 @@ const PaymentPlanForm = ({ edit, plan: initialPlan, setIsSubmitting }) => {
               disabled={descriptions.length >= 6 || descriptions.some(desc => desc.trim() === '')}
               className='disabled:bg-transparent'
             >
-              { descriptions.length >=1 ? "+ Add another description":"Add Description"}
+             { descriptions.length <1  ?"+ Add description":"+ Add another description"}
             </Button>
             <Button
               variant="dark"
