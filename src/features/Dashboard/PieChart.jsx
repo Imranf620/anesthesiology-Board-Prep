@@ -6,7 +6,10 @@ const Chart = ({ data }) => {
   console.log(data);
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart width={400} height={400} data={data}>
+      <LineChart
+        data={data}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
@@ -14,7 +17,12 @@ const Chart = ({ data }) => {
           contentStyle={{ background: "#193832" }}
           itemStyle={{ color: "#fff" }}
         />
-        <Line type="monotone" dataKey="value" stroke={colors[0]} activeDot={{ r: 8 }} />
+        <Line
+          type="monotone"
+          dataKey="value"
+          stroke={colors[0]}
+          activeDot={{ r: 8 }}
+        />
       </LineChart>
     </ResponsiveContainer>
   );

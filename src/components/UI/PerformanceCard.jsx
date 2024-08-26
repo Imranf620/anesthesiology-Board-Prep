@@ -25,7 +25,7 @@ const PerformanceCard = ({
   });
 
   return (
-    <div className="px-5 flex flex-col py-3 border-l-4 border-red-500 rounded-md bg-slate-100 text-gray-500 text-[0.9rem]">
+    <div className="px-5 flex flex-col py-3 border-l-4 border-green-500 rounded-md bg-slate-100 text-gray-500 text-[0.9rem]">
       <div className="flex justify-between">
         <div className="flex flex-col">
           <p>{title}</p>
