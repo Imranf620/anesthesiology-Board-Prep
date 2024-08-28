@@ -11,6 +11,7 @@ const QuestionSearch = ({ admin = false }) => {
     clearSearchState();
     queryClient.fetchQuery({ queryKey: ["all-questions"] });
   };
+ 
   return (
     <div className="w-full bg-white lg:ml-5 border-l- h-full border-gray-300">
       <section className="px-2 bg-slate-200">

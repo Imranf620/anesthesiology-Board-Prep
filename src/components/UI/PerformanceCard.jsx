@@ -1,4 +1,4 @@
-import Chart from "../../features/Dashboard/PieChart";
+import Chart from "../../features/Dashboard/PieChart"; // Update the path if needed
 
 const PerformanceCard = ({
   title,
@@ -7,22 +7,15 @@ const PerformanceCard = ({
   overall,
   position,
   chart = false,
+  detail = [],
 }) => {
-  const data = [
-    {
-      name: title,
-      value: obtained,
-    },
-    {
-      name: overallTitle,
-      value: overall,
-    },
-  ];
-
-  const prepareData = data.map((obj) => {
-    const value = parseFloat(obj.value);
-    return { name: obj.name, value };
-  });
+  // Process and prepare the data for the chart
+  const prepareData = detail.map((entry, index) => ({
+    name: entry.Date_Added,
+    userScore: entry.Score,
+    averageScore: overall, // Assuming overall is the SmartPrep Average
+    timePoint: index + 1,
+  }));
 
   return (
     <div className="px-5 flex flex-col py-3 border-l-4 border-green-500 rounded-md bg-slate-100 text-gray-500 text-[0.9rem]">
@@ -32,13 +25,13 @@ const PerformanceCard = ({
           <h3 className="text-[2rem] font-[600] text-black">{obtained}</h3>
         </div>
         <div>
-          <p>{overallTitle}</p>
+          <p>SmartPrep Average</p>
           <h3 className="font-[500]">{overall}</h3>
         </div>
       </div>
 
       {chart && (
-        <div className="w-[15rem] h-[15rem] mx-auto">
+        <div className="w-full h-[15rem] mx-auto">
           <Chart data={prepareData} />
         </div>
       )}

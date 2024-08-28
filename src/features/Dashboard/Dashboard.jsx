@@ -5,8 +5,8 @@ import { useGetResults } from './useGetResults';
 import { FiEdit2 } from 'react-icons/fi';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { DateRange } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // Import the styles
-import 'react-date-range/dist/theme/default.css'; // Import the default theme
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 const Dashboard = () => {
   const { results, isLoading } = useGetResults();
@@ -23,8 +23,9 @@ const Dashboard = () => {
   const calendarRef = useRef(null);
   const [hidePerformance, setHidePerformance] = useState(false);
 
+  
+
   useEffect(() => {
-    // Initialize hidePerformance from sessionStorage
     const storedHidePerformance = sessionStorage.getItem('hidePerformance');
     setHidePerformance(storedHidePerformance === 'true');
   }, []);
@@ -33,6 +34,7 @@ const Dashboard = () => {
     setHidePerformance(hide);
     sessionStorage.setItem('hidePerformance', hide);
   };
+
 
   useEffect(() => {
     if (results && results.length > 0) {
@@ -54,7 +56,6 @@ const Dashboard = () => {
   }, [results]);
 
   useEffect(() => {
-    // Calculate the remaining days whenever examDate changes
     if (examDate) {
       const today = new Date();
       const timeDiff = examDate - today;
@@ -73,6 +74,7 @@ const Dashboard = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
 
   return (
     <>
@@ -148,7 +150,7 @@ const Dashboard = () => {
       </div>
 
       <section className="flex flex-col gap-3 py-4">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2">
           <h3 className="text-[1.2rem] font-[500]">Performance Snapshot </h3>
 
           <div className="flex items-center gap-2 cursor-pointer">
@@ -156,8 +158,7 @@ const Dashboard = () => {
         <div  className='flex items-center gap-2' onClick={() => handleTogglePerformance(false)}>
           <BsEye
             size={24}
-           
-            className="text-gray-600 hover:text-blue-500 transition-colors duration-300"
+            className="text-green-900"
           />
           <h1 className="text-[1.2rem] font-[500] text-black">Show</h1>
         </div>
@@ -165,8 +166,7 @@ const Dashboard = () => {
         <div className='flex items-center gap-2' onClick={() => handleTogglePerformance(true)}>
           <BsEyeSlash
             size={24}
-           
-            className="text-gray-600 hover:text-blue-500 transition-colors duration-300"
+            className="text-green-900"
           />
           <h1 className="text-[1.2rem] font-[500] text-black">Hide</h1>
         </div>
@@ -185,6 +185,7 @@ const Dashboard = () => {
               overall="67.5%"
               position={`${totalCorrect}/${totalQuestions} Correct/Total Questions taken`}
               chart={true}
+              data={results}
             />
             <PerformanceCard
               title="Percentile"
@@ -193,6 +194,7 @@ const Dashboard = () => {
               overall="80th"
               position="1st last 100 Questions"
               chart={true}
+              data={results}
             />
             <PerformanceCard
               title="Total Questions Taken"
@@ -201,6 +203,7 @@ const Dashboard = () => {
               overall="18"
               position="1.8% of Bank Completed (1023 Qs)"
               chart={true}
+              detail={results}
             />
           </div>
         )}

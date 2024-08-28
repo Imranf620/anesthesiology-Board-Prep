@@ -10,6 +10,7 @@ const CheckedInput = ({
   checkedOptions,
   option,
   disable,
+
 }) => {
   if (disable)
     return (
@@ -58,6 +59,7 @@ const QuestionsResultFilter = ({
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [action, setAction] = useState('');
   const [selectAll, setSelectAll] = useState(false);
+  console.log(admin)
   const ref = useOutsideClick(() => {
     setShowMenu(false);
     setShowActionMenu(false);
@@ -160,7 +162,7 @@ const QuestionsResultFilter = ({
         </div>
 
         {/* Action Dropdown */}
-       <div className="relative">
+   { admin &&   <div className="relative">
           <button
             onClick={() => setShowActionMenu(prev => !prev)}
             className="flex w-[10rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
@@ -197,7 +199,7 @@ const QuestionsResultFilter = ({
               </div>
             </div>
           )}
-        </div>
+        </div>}
       </div>
     </div>
   );

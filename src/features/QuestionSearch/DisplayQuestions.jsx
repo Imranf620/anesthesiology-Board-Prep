@@ -99,6 +99,7 @@ const DisplayQuestions = ({ admin }) => {
     }
 };
 
+
   
 
 // const handleCheckboxChange = (event) => {
@@ -136,9 +137,8 @@ const DisplayQuestions = ({ admin }) => {
     }
   }, [state.searchResults, queryClient]);
 
-  console.log('Data:', data);
-  console.log('Checked Options:', checkedOptions);
-
+  
+ 
   return (
     <section className="bg-white px-3 pb-10">
       {/* Result Filter */}
