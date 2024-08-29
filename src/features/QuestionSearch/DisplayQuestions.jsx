@@ -140,7 +140,7 @@ const DisplayQuestions = ({ admin }) => {
   
  
   return (
-    <section className="bg-white px-3 pb-10">
+    <section className="bg-white px-3 pb-10 ">
       {/* Result Filter */}
       <QuestionsResultFilter
         checkedOptions={checkedOptions}
@@ -149,7 +149,7 @@ const DisplayQuestions = ({ admin }) => {
       />
 
       {/* Data Table */}
-      <div className="mx-auto max-h-[80dvh] w-full min-w-[300px] overflow-hidden rounded-lg border-2 border-gray-400">
+      <div className="mx-auto max-h-[80dvh] w-full min-w-[300px] overflow-hidden rounded-lg border-2 md:mt-20 border-gray-400">
         <div className="max-h-[70dvh] w-full overflow-auto">
           <Table className="w-full border-collapse overflow-auto">
             <Table.Head>

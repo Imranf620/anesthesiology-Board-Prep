@@ -57,7 +57,7 @@ const QuestionSearchForm = ({ admin }) => {
         <div className="flex flex-wrap md:flex-nowrap gap-3 items-center flex-1 self-stretch">
           <div className="flex self-stretch gap-3 items-center">
             <label className="font-[500] text-[1rem]">Categories</label>
-            <Select className="flex self-stretch">
+            <Select className="flex  self-stretch">
               <option disabled selected>
                 Please select category
               </option>
@@ -68,7 +68,7 @@ const QuestionSearchForm = ({ admin }) => {
               <option value="Categoray 5">Categoray 5</option>
             </Select>
           </div>
-          <Button
+          {/* <Button
             disabled={!keyword || isLoading}
             type="button"
             variant="dark"
@@ -76,7 +76,7 @@ const QuestionSearchForm = ({ admin }) => {
               className="text-[1rem] w-max md:absolute md:right-[35vw] md:top-[87px] "
           >
             Create Test
-          </Button>
+          </Button> */}
         </div>
       )}
     </form>
