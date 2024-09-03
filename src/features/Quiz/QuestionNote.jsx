@@ -22,16 +22,18 @@ const QuestionNote = ({ questionID, userTestID, Topic }) => {
         username: localStorage.getItem('username'),
         questionID,
         userTestID,
-        bookmarkStatus: 'Y',  // Assuming you want to save it as bookmarked
+        bookmarkStatus: 'N',  // Assuming you want to save it as bookmarked
         topic: Topic,   
         description: text,
       };
 
       try {
-        await createUpdateNote(noteData);
+       const res = await createUpdateNote(noteData);
         setPreviousNotes([...previousNotes, text]);
         setText('');
-        toast.success('Notes saved successfully!');
+        
+
+        toast.success(res.data.Message,  { autoClose: 2000 });
       } catch (error) {
         toast.error('Failed to save note.');
       }

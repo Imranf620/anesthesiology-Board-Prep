@@ -81,7 +81,7 @@ const Quiz = ({ takeQuiz }) => {
     <div className="flex h-full">
       <div className="mx-3 flex w-full flex-col pb-12 lg:mx-8">
         <QuizHead takeQuiz={takeQuiz} />
-        <QuizQuestion toggleSide={toggleSide} />
+        <QuizQuestion toggleSide={toggleSide} userTestID={state.quiz?.userTestID} />
         <QuizButtons />
       </div>
       <div
