@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { addUpdateRateQuestion } from '../../services/apiQuestions';
 import { createUpdateNote } from '../../services/apiNotes';  // Import your API function
 import Heading from '../../components/UI/Heading';
@@ -10,8 +10,10 @@ import { CiCalculator1 } from 'react-icons/ci';
 import { TbNotes, TbThumbDown, TbThumbUp } from 'react-icons/tb';
 import { FiMessageCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import { QuizQuestionIconContext } from '../../context/QuizQuestionIconContext';
 
 const QuizQuestion = ({ toggleSide,userTestID }) => {
+  const {updateIconState, iconState} = useContext(QuizQuestionIconContext)
   const [searchParams] = useSearchParams();
   const [activeOption, setActiveOption] = useState(null);
   const [optionSubmitted, setOptionSubmited] = useState(false);
@@ -63,14 +65,15 @@ const QuizQuestion = ({ toggleSide,userTestID }) => {
         username: localStorage.getItem('username'),
         questionID: question.QuestionID,
         bookmarkStatus: 'Y',
-        userTestID: userTestID, // You may need to dynamically get this value
-        topic: question.Topic, // Replace with actual topic if needed
-        description: "Bookmarked", // Replace with actual description if needed
+        userTestID: userTestID, 
+        topic: question.Topic, 
+       
       };
 
      const res =  await createUpdateNote(bookmarkData);
 
       toast.success(res.data.Message, { autoClose: 2000 });
+      updateIconState(!iconState)
     } catch (error) {
       toast.error('Failed to bookmark question.');
     }

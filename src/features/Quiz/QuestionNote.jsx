@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { IoIosCheckmark } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { createUpdateNote } from '../../services/apiNotes';
+import { QuizQuestionIconContext } from '../../context/QuizQuestionIconContext';
 
 const QuestionNote = ({ questionID, userTestID, Topic }) => {
+  const {updateIconState, iconState} = useContext(QuizQuestionIconContext)
+
   const [text, setText] = useState('');
   const [previousNotes, setPreviousNotes] = useState([]);
   const maxChars = 2000;
@@ -21,8 +24,7 @@ const QuestionNote = ({ questionID, userTestID, Topic }) => {
       const noteData = {
         username: localStorage.getItem('username'),
         questionID,
-        userTestID,
-        bookmarkStatus: 'N',  // Assuming you want to save it as bookmarked
+        userTestID, // Assuming you want to save it as bookmarked
         topic: Topic,   
         description: text,
       };
@@ -34,6 +36,7 @@ const QuestionNote = ({ questionID, userTestID, Topic }) => {
         
 
         toast.success(res.data.Message,  { autoClose: 2000 });
+        updateIconState(!iconState)
       } catch (error) {
         toast.error('Failed to save note.');
       }

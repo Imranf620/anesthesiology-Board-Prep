@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getNotes } from '../../services/apiNotes';
 import { toast } from 'react-toastify';
 import { FaRegBookmark } from 'react-icons/fa6';
 import { TbNotes } from 'react-icons/tb';
+import { QuizQuestionIconContext } from '../../context/QuizQuestionIconContext';
 
 const QuizNavigate = ({ ques, index, state }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const questionOrder = +searchParams.get('questionOrder');
   const ref = useRef();
-
+  const { iconState } = useContext(QuizQuestionIconContext);
   const [notes, setNotes] = useState([]);
-
   const username = localStorage.getItem('username');
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const QuizNavigate = ({ ques, index, state }) => {
     };
 
     fetchNotes();
-  }, [username, ]);
+  }, [username, iconState]);
 
   // Check if option is selected or not
   const isOptionSelected = state?.options?.find(
@@ -43,15 +43,11 @@ const QuizNavigate = ({ ques, index, state }) => {
       ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [ref, questionOrder, index]);
 
-  // Determine if the question is bookmarked or noted
+  // Determine if the question is bookmarked, noted, or both
   const note = notes?.find(note => note?.questionID === ques?.QuestionID);
 
-  const isBookmarked = note?.bookmarkStatus === 'Y' && note?.description === 'Bookmarked';
-  const isNoted = note?.bookmarkStatus === 'N' && note?.description;
-
-  console.log(notes);
-  console.log("isBookmarked", isBookmarked);
-  console.log("isNoted", isNoted);
+  const isBookmarked = note?.bookmarkStatus === 'Y';
+  const isNoted = note?.description && note?.bookmarkStatus !== 'N';
 
   // Style for selected options
   const style =
@@ -83,13 +79,12 @@ const QuizNavigate = ({ ques, index, state }) => {
       </button>
       <TbNotes
         size={20}
-        color={isNoted ? 'blue' : 'gray'}
-        title={isNoted ? 'Noted' : 'Noted'}
+        color={isNoted || (note?.bookmarkStatus === 'Y' && note?.description) ? 'blue' : 'gray'}
+        title={isNoted ? 'Noted' : 'Note'}
       />
       <FaRegBookmark
         size={20}
-       
-        color={isBookmarked ? 'orange' : 'gray'}
+        color={isBookmarked || (note?.bookmarkStatus === 'Y' && note?.description) ? 'orange' : 'gray'}
         title={isBookmarked ? 'Bookmarked' : 'Bookmark'}
       />
       <div
