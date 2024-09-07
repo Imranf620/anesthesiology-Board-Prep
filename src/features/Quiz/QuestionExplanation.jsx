@@ -6,21 +6,35 @@ import Modal from '../../components/UI/Modal';
 import VideoExplanation from './VideoExplanation';
 import QuizNotes from './QuizNotes';
 import { FaXmark } from 'react-icons/fa6';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewModal from './ReviewModal'; // Import the new modal component
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useSearchResultContext } from '../../context/SearchResultContext';
 
 const QuestionExplanation = ({ setShowExplanation }) => {
+  const {state:data} = useSearchResultContext()
   const [searchParams] = useSearchParams();
   const { state } = useQuizContext();
   const [showRes, setShowRes] = useState(true);
   const questionId = +searchParams.get('questionId');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewType, setReviewType] = useState('');
-
+  const [summaryQuestion, setSummaryQuestion] = useState()
+  
   // Take out the question
   const question = state.questions.find(ques => ques.QuestionID === questionId);
+// Added for summary
+  // const summary = data.searchResults.find(ques => ques.id === questionId);
+
+
+  useEffect(() => {
+      const fetchedSummary = data.searchResults.find(ques => ques.id === questionId);
+      setSummaryQuestion(fetchedSummary);
+      console.log("Summary", summaryQuestion?.Summary)
+    
+  }, [data.searchResults, questionId, showRes]);
+
 
   // Take out the correct option
   const correctOpt =
@@ -78,7 +92,6 @@ const QuestionExplanation = ({ setShowExplanation }) => {
     setShowReviewModal(true);
     setShowRes(false);
   };
-
   return (
     <section className="relative mt-4 rounded-lg border-2 border-gray-500 bg-white p-5 shadow-md md:p-10">
       <div
@@ -220,7 +233,7 @@ const QuestionExplanation = ({ setShowExplanation }) => {
         ))}
       </ul>
 
-      <QuizNotes summary={question.Statement} question={question} />
+      <QuizNotes summary={summaryQuestion?.Summary} question={question} />
       
       <div className="mt-8 flex flex-col gap-6">
         <Heading>Video Explanation</Heading>

@@ -51,7 +51,7 @@ const QuestionsResultFilter = ({
   onCheckboxChange,
   checkedOptions,
   setCheckedOptions,
-  admin
+  admin,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showMenu, setShowMenu] = useState(false);
@@ -69,15 +69,15 @@ const QuestionsResultFilter = ({
   const { state } = useSearchResultContext();
   const optionsArr = Object.keys(checkedOptions);
 
-  const handleSelectedOption = (opt) => {
+  const handleSelectedOption = opt => {
     searchParams.set('questions', opt);
     setSearchParams(searchParams);
   };
 
-  const handleCategorySelection = (category) => {
-    setSelectedCategories((prevCategories) => {
+  const handleCategorySelection = category => {
+    setSelectedCategories(prevCategories => {
       if (prevCategories.includes(category)) {
-        return prevCategories.filter((cat) => cat !== category);
+        return prevCategories.filter(cat => cat !== category);
       } else {
         return [...prevCategories, category];
       }
@@ -88,7 +88,6 @@ const QuestionsResultFilter = ({
     searchParams.set('categories', selectedCategories.join(','));
     setSearchParams(searchParams);
   };
-  
 
   const handleAction = () => {
     // Handle the action here (e.g., update the state or make an API call)
@@ -123,10 +122,11 @@ const QuestionsResultFilter = ({
     <div className="mb-5 flex flex-wrap items-center justify-between gap-y-4 px-10 md:h-[70px]">
       <div className="flex items-center gap-4 self-stretch ">
         <div
-          className={`${searchParams.get('questions') === 'allQuestions'
-            ? 'border-primary-500'
-            : 'border-transparent'
-            } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
+          className={`${
+            searchParams.get('questions') === 'allQuestions'
+              ? 'border-primary-500'
+              : 'border-transparent'
+          } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
           onClick={() => handleSelectedOption('allQuestions')}
         >
           All Questions{' '}
@@ -136,26 +136,28 @@ const QuestionsResultFilter = ({
         </div>
         <div
           onClick={() => handleSelectedOption('selected')}
-          className={`${searchParams.get('questions') === 'selected'
-            ? 'border-primary-500'
-            : 'border-transparent'
-            } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
+          className={`${
+            searchParams.get('questions') === 'selected'
+              ? 'border-primary-500'
+              : 'border-transparent'
+          } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
         >
           Selected {state.selectedData.length}
         </div>
       </div>
-     {!admin && ( <div className='flex justify-end'>
-        <Button
-          // disabled={!keyword || isLoading}
-          type="button"
-          variant="dark"
-          className="text-[1rem] w-max"
-          onClick={createTestBasedOnCategories}
-          disabled={selectedCategories.length === 0}
-        >
-          Create Test
-        </Button>
-      </div>
+      {!admin && (
+        <div className="flex justify-end">
+          <Button
+            // disabled={!keyword || isLoading}
+            type="button"
+            variant="dark"
+            className="w-max text-[1rem]"
+            onClick={createTestBasedOnCategories}
+            disabled={selectedCategories.length === 0}
+          >
+            Create Test
+          </Button>
+        </div>
       )}
       <div className="flex flex-wrap items-center gap-3">
         {/* Select Columns to show */}
@@ -174,7 +176,6 @@ const QuestionsResultFilter = ({
               ref={ref}
               className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
             >
-
               {/* <CheckedInput disable={true} option="All Selected" />
               <CheckedInput disable={true} option="Serial Number" /> */}
               {optionsArr.map(opt => (
@@ -193,108 +194,117 @@ const QuestionsResultFilter = ({
         {admin && (
           <div className="relative">
             <button
-              onClick={() => setShowActionMenu((prev) => !prev)}
-              className="flex w-[10rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
+              onClick={() => setShowActionMenu(prev => !prev)}
+              className="flex w-[12rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
             >
-              <span>status</span>
+              <span>Status</span>
               <span>
                 <IoChevronDownOutline />
               </span>
             </button>
             {showActionMenu && (
-              <div
+              <ul
                 ref={ref}
                 className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
               >
-                <span
+                <li
                   onClick={() => setAction('active')}
-                  className="px-4 py-2 hover:bg-primary-200"
+                  className="flex  text-[1.1rem] capitalize cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-200 "
                 >
                   Make it Active
-                </span>
-                <span
+                </li>
+                <li
                   onClick={() => setAction('inactive')}
-                  className="px-4 py-2 hover:bg-primary-200"
+                  className="flex  text-[1.1rem] capitalize cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-200"
                 >
                   Make it Inactive
-                </span>
-                <div className="mt-2 flex justify-end">
-                  <button
+                </li>
+                <div className="flex justify-end  px-3 py-2">
+                  <Button
                     onClick={handleAction}
-                    className="bg-primary-500 px-3 py-1 text-sm text-white hover:bg-primary-600"
+                    className='w-24 h-10'
+                   variant="dark"
                   >
                     Confirm
-                  </button>
+                  </Button>
+                  
                 </div>
-              </div>
+              </ul>
             )}
           </div>
         )}
 
         {/* Category Dropdown */}
-        {!admin && ( <div className="relative">
-          <button
-            onClick={() => setShowCategoryMenu((prev) => !prev)}
-            className="flex w-[18rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
-          >
-            <span>Select Category</span>
-            <span>
-              <IoChevronDownOutline />
-            </span>
-          </button>
-          {showCategoryMenu && (
-            <ul
-              ref={ref}
-              className="absolute bottom-0 z-30 flex w-[18rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
+        {!admin && (
+          <div className="relative">
+            <button
+              onClick={() => setShowCategoryMenu(prev => !prev)}
+              className="flex w-[18rem] items-center justify-between rounded-md border-2 px-3 py-2 text-start"
             >
-              <li className="px-4 py-2">
-                <span className="font-bold">Basic Sciences</span>
-                <ul className="pl-4">
-                  <li
-                    className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anatomy') ? 'bg-primary-100' : ''}`}
-                    onClick={() => handleCategorySelection('Anatomy')}
-                  >
-                    Anatomy
-                  </li>
-                  <li
-                    className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Physics, Monitoring') ? 'bg-primary-100' : ''}`}
-                    onClick={() => handleCategorySelection('Physics, Monitoring')}
-                  >
-                    Physics, Monitoring
-                  </li>
-                  <li
-                    className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anesthesia Delivery Devices') ? 'bg-primary-100' : ''}`}
-                    onClick={() => handleCategorySelection('Anesthesia Delivery Devices')}
-                  >
-                    Anesthesia Delivery Devices
-                  </li>
-                  <li
-                    className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Mathematics') ? 'bg-primary-100' : ''}`}
-                    onClick={() => handleCategorySelection('Mathematics')}
-                  >
-                    Mathematics
-                  </li>
-                  <li
-                    className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Pharmacology') ? 'bg-primary-100' : ''}`}
-                    onClick={() => handleCategorySelection('Pharmacology')}
-                  >
-                    Pharmacology
-                  </li>
-                </ul>
-              </li>
+              <span>Select Category</span>
+              <span>
+                <IoChevronDownOutline />
+              </span>
+            </button>
+            {showCategoryMenu && (
+              <ul
+                ref={ref}
+                className="absolute bottom-0 z-30 flex w-[18rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
+              >
+                <li className="px-4 py-2">
+                  <span className="font-bold">Basic Sciences</span>
+                  <ul className="pl-4">
+                    <li
+                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anatomy') ? 'bg-primary-100' : ''}`}
+                      onClick={() => handleCategorySelection('Anatomy')}
+                    >
+                      Anatomy
+                    </li>
+                    <li
+                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Physics, Monitoring') ? 'bg-primary-100' : ''}`}
+                      onClick={() =>
+                        handleCategorySelection('Physics, Monitoring')
+                      }
+                    >
+                      Physics, Monitoring
+                    </li>
+                    <li
+                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anesthesia Delivery Devices') ? 'bg-primary-100' : ''}`}
+                      onClick={() =>
+                        handleCategorySelection('Anesthesia Delivery Devices')
+                      }
+                    >
+                      Anesthesia Delivery Devices
+                    </li>
+                    <li
+                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Mathematics') ? 'bg-primary-100' : ''}`}
+                      onClick={() => handleCategorySelection('Mathematics')}
+                    >
+                      Mathematics
+                    </li>
+                    <li
+                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Pharmacology') ? 'bg-primary-100' : ''}`}
+                      onClick={() => handleCategorySelection('Pharmacology')}
+                    >
+                      Pharmacology
+                    </li>
+                  </ul>
+                </li>
 
-              <li className="px-4 py-2">
-                <span className="font-bold">Clinical Sciences</span>
-                <ul className="pl-4">
-                  <li className="py-1 hover:bg-primary-100">
-                    Regional Anesthesia
-                  </li>
-                  <li className="py-1 hover:bg-primary-100">Special Techniques</li>
-                </ul>
-              </li>
-            </ul>
-          )}
-        </div>
+                <li className="px-4 py-2">
+                  <span className="font-bold">Clinical Sciences</span>
+                  <ul className="pl-4">
+                    <li className="py-1 hover:bg-primary-100">
+                      Regional Anesthesia
+                    </li>
+                    <li className="py-1 hover:bg-primary-100">
+                      Special Techniques
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            )}
+          </div>
         )}
       </div>
     </div>

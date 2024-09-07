@@ -47,7 +47,7 @@ const QuizNavigate = ({ ques, index, state }) => {
   const note = notes?.find(note => note?.questionID === ques?.QuestionID);
 
   const isBookmarked = note?.bookmarkStatus === 'Y';
-  const isNoted = note?.description && note?.bookmarkStatus !== 'N';
+  const isNoted = note?.description ;
 
   // Style for selected options
   const style =

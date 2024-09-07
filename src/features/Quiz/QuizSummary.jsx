@@ -7,6 +7,7 @@ const QuizSummary = ({ onCloseModal }) => {
   const { state } = useQuizContext();
   const { results, isLoading } = useGetResults();
 
+
   const test = results.find(tst => tst.UserTestID === state.quiz.userTestID);
 
   return isLoading ? (
