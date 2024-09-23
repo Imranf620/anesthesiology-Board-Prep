@@ -14,6 +14,8 @@ export const createTest = catchAsync(async data => {
     '0' + currentDate.getSeconds()
   ).slice(-2)}`;
 
+  data.test_date = formattedDate;
+
   if (data.testType.toLowerCase() === 'timed') {
     const testTimeSeconds = data.questionsCount * 60;
     const testTimeMinutes = String(data.questionsCount % 60).padStart(2, 0);
@@ -24,6 +26,8 @@ export const createTest = catchAsync(async data => {
   }
 
   data.testName = `${data.testName} ${formattedDate}`;
+
+  console.log('Data being sent to API:', data);
   const res = await API.post('/readyTest', data);
   if (res.data.Error) throw Error(res.data.Error);
 

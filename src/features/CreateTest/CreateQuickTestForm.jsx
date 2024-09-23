@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaInfoCircle } from 'react-icons/fa';
 import Button from '../../components/UI/Button';
 import { useCreateTest } from './useCreateTest';
 import { useQuizContext } from '../../context/QuizContext';
 import { toast } from 'react-toastify';
 import { useGetResults } from '../Dashboard/useGetResults';
 import { useGetProfile } from '../Authentication/useGetProfile';
+import { FaInfoCircle } from 'react-icons/fa';
 
-const TEST_TYPES = ['timed', 'untimed', 'tutor'];
+const TEST_TYPES = ['Timed Test', 'Untimed Test', 'Learning mode'];
 
 const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   const [testType, setTestType] = useState('');
@@ -20,7 +20,9 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   });
   const [error, setError] = useState(null);
   const [defaultName, setDefaultName] = useState(null);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [testDate, setTestDate] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
   const testNameRef = useRef();
   const numOfQuestionsRef = useRef();
   const { createTest, isLoading } = useCreateTest();
@@ -29,34 +31,42 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   const { results } = useGetResults();
   const { profile } = useGetProfile();
 
+  // Handle Checked options
   const handleCheckbox = e => {
     setError(null);
     const { name, checked } = e.target;
     setCheckedOptions({ ...checkedOptions, [name]: checked });
   };
 
+  // Handle form submittion (create test/quiz)
   const handleSubmit = e => {
     e.preventDefault();
+    // Take out the selected keywords ['New','Correct','Incorrect']
     const questionType = Object.keys(checkedOptions).filter(
       typ => checkedOptions[typ],
     );
 
+    // If no question type is selected return error
     if (!questionType.length) {
       return setError('Please select Question Type');
     }
 
+    // If no test type is selected return error
     if (!testType) {
       return setError('Please select Test Type');
     }
 
+    // Data to create a quiz/test
     const data = {
       username: localStorage.getItem('username'),
       testName: testNameRef.current.value,
       testType: testType.toUpperCase(),
       questionsCount: +numOfQuestionsRef.current.value,
       questionStateList: questionType,
+      testDate: testDate,
     };
 
+    // Create test/quiz function
     createTest(data, {
       onSuccess: data => {
         onCloseSidebar?.();
@@ -79,6 +89,7 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
     });
   };
 
+  // handler function to set the test type
   const handleTestType = typ => {
     setTestType(typ);
   };
@@ -86,15 +97,11 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
   useEffect(() => {
     if (!profile || !results) return;
     const date = new Date();
-    const defaultTestName = `T${String(results?.length + 1).padStart(
-      2,
-      0,
-    )}-${profile?.Name.split(' ').join('-')}-${date.toLocaleDateString(
-      'en-US',
-    )}`;
-    setDefaultName(defaultTestName);
+    const defaultTestName = `T${String(results?.length + 1).padStart(2, '0')}-${profile?.Name.split(' ').join('-')}-${date.toLocaleDateString('en-US')};
+    setDefaultName(defaultTestName)`;
   }, [results, profile, setDefaultName]);
 
+  // Styles
   const labelClasses = 'font-[500] text-xl';
   const inputClasses = `outline-none py-2 px-3 rounded-md border-2 text-black ${
     quickTest
@@ -102,6 +109,7 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       : 'focus:border-gray-500 border-gray-200'
   }`;
 
+  // Checkbox classes
   const inputCheckboxClasses =
     'h-5 w-5 text-primary-300 transition duration-150 ease-in-out cursor-pointer accent-primary-300';
 
@@ -109,9 +117,8 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
     <form
       onSubmit={handleSubmit}
       className={
-        formClasses
-          ? formClasses
-          : 'scrollbar flex h-[70%] w-full flex-col gap-7 overflow-y-auto px-4 pb-6'
+        formClasses ||
+        'scrollbar flex h-[70%] w-full flex-col gap-7 overflow-y-auto px-4 pb-6'
       }
     >
       {/* Test Name */}
@@ -125,26 +132,17 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
           className={inputClasses}
         />
       </div>
-
       {/* Test type */}
-      <div className="flex flex-col gap-2 relative">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <label className={labelClasses}>Test Type</label>
           <FaInfoCircle
             className="cursor-pointer"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
+            title={`
+              Timed Test: A test with a fixed time limit for completion.
+Untimed Test: A test with no time restrictions, allowing completion at one's own pace.
+Learning mode: A guided test type, often used for learning, with real-time feedback or assistance.`}
           />
-          {showTooltip && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full w-full h- mb-2 bg-gray-700 text-white text-sm rounded py-2 px-3">
-              <p className="font-bold">Timed Test:</p>
-              <p>A test with a fixed time limit for completion.</p>
-              <p className="font-bold">Untimed Test:</p>
-              <p>A test with no time restrictions, allowing completion at one's own pace.</p>
-              <p className="font-bold">Tutor Test:</p>
-              <p>A guided test type, often used for learning, with real-time feedback or assistance.</p>
-            </div>
-          )}
         </div>
         <ul className="flex overflow-hidden rounded-md text-[0.9rem] text-black">
           {TEST_TYPES.map(typ => (
@@ -154,10 +152,8 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
               className={`flex-1 cursor-pointer px-3 py-2 text-center capitalize ${
                 typ === testType
                   ? 'bg-primary-400 text-white'
-                  : ` hover:bg-gray-200 ${
-                      quickTest ? 'bg-white' : 'bg-gray-100'
-                    }`
-              }`}
+                  : 'hover:bg-gray-200'
+              } ${quickTest ? 'bg-white' : 'bg-gray-100'}`}
             >
               {typ}
             </li>
@@ -190,7 +186,7 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
       <div className="flex flex-col gap-4">
         <label className={labelClasses}>Question Type</label>
         <div className="flex flex-col gap-3">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
               name="New"
               type="checkbox"
@@ -198,9 +194,14 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
               checked={checkedOptions.New}
               className={inputCheckboxClasses}
             />
-            <label>New</label>
+            <label
+              className="flex items-center"
+              title="New (Unused questions in test)"
+            >
+              New <FaInfoCircle className="ml-1 text-primary-300" />
+            </label>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
               name="Correct"
               type="checkbox"
@@ -208,9 +209,14 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
               checked={checkedOptions.Correct}
               className={inputCheckboxClasses}
             />
-            <label>Correct</label>
+            <label
+              className="flex items-center"
+              title="Correct (Questions user has marked correctly)"
+            >
+              Correct <FaInfoCircle className="ml-1 text-primary-300" />
+            </label>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
               name="Incorrect"
               type="checkbox"
@@ -218,9 +224,14 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
               checked={checkedOptions.Incorrect}
               className={inputCheckboxClasses}
             />
-            <label>Incorrect</label>
+            <label
+              className="flex items-center"
+              title="Incorrect (Questions user has marked incorrectly)"
+            >
+              Incorrect <FaInfoCircle className="ml-1 text-primary-300" />
+            </label>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
               name="Marked"
               type="checkbox"
@@ -228,10 +239,16 @@ const CreateQuickTestForm = ({ onCloseSidebar, formClasses, quickTest }) => {
               checked={checkedOptions.Marked}
               className={inputCheckboxClasses}
             />
-            <label>Marked</label>
+            <label
+              className="flex items-center"
+              title="Marked (Questions user has marked during the test)"
+            >
+              Marked <FaInfoCircle className="ml-1 text-primary-300" />
+            </label>
           </div>
         </div>
       </div>
+
       <div className="flex flex-col gap-2">
         {error && (
           <span className="text-center text-[0.8rem] text-red-500/90">
