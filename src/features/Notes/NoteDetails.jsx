@@ -1,12 +1,53 @@
 import { MdOutlineEventNote } from 'react-icons/md';
 import { useGetAllQuestions } from '../QuestionSearch/useGetAllQuestions';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { getNotes } from '../../services/apiNotes';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useSearchParams } from 'react-router-dom';
 
-const NoteDetails = ({ note }) => {
+const NoteDetails = ({ note = '' }) => {
   const { allQuestions, isLoading } = useGetAllQuestions();
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [searchParams] = useSearchParams();
+  const questionId = searchParams.get('id');
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const username = localStorage.getItem('username');
+        const res = await getNotes({ username });
+        const allNotes = res.data.Notes;
+
+        console.log('Fetched Notes:', allNotes);
+        console.log('Query ID:', questionId);
+
+        const idToCompare = Number(questionId);
+
+        const data = allNotes.find(
+          item => item.id || item.questionID === idToCompare,
+        );
+        setSelectedNote(data || null);
+
+        console.log('Selected Note:', data);
+      } catch (error) {
+        toast.error(error.message, { autoClose: 2000 });
+      }
+    };
+
+    if (note === '' && questionId) {
+      getData();
+    } else if (note !== '') {
+      setSelectedNote(note);
+    }
+  }, [note, questionId]);
+
+  if (selectedNote === null) {
+    return <p>Note not found.</p>;
+  }
 
   const question = allQuestions?.questions?.find(
-    ques => ques.id === +note.questionID,
+    ques => ques.id === +selectedNote.questionID,
   );
 
   return (
@@ -23,8 +64,8 @@ const NoteDetails = ({ note }) => {
           </div>
         ) : (
           <>
-            <h3 className="font-[600]">Topic: {note.topic} </h3>
-            <p>{note.description}</p>
+            <h3 className="font-[600]">Topic: {selectedNote.topic} </h3>
+            <p>{selectedNote.description}</p>
 
             {question && (
               <>
@@ -37,7 +78,7 @@ const NoteDetails = ({ note }) => {
             )}
 
             <h3 className="font-[600]">
-              Date & Time: {new Date(note.createdAt).toLocaleString()}
+              Date & Time: {new Date(selectedNote.createdAt).toLocaleString()}
             </h3>
           </>
         )}

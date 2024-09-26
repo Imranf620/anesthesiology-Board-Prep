@@ -8,6 +8,13 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import DisplayQuestionsItem from './DisplayQuestionsItem';
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi';
 import Button from '../../components/UI/Button';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { MdNote } from 'react-icons/md';
+import { TbNotes } from 'react-icons/tb';
+import Modal from '../../components/UI/Modal';
+import NoteDetails from '../Notes/NoteDetails';
+import { getNotes } from '../../services/apiNotes';
+import { toast } from 'react-toastify';
 
 const DisplayQuestions = ({ admin }) => {
   const {
@@ -16,11 +23,14 @@ const DisplayQuestions = ({ admin }) => {
     removeSelectedData,
     isQuestionsLoading: isLoading,
   } = useSearchResultContext();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [bookmarkState, setBookmarkState] = useState({});
   const queryClient = useQueryClient();
   const totalResults = state.searchResults.length;
+  // console.log('state', state);
+  const [selectedNote, setSelectedNote] = useState(null);
   const [checkedOptions, setCheckedOptions] = useState(() =>
     admin
       ? {
@@ -43,10 +53,21 @@ const DisplayQuestions = ({ admin }) => {
 
   // Take out the type either 'all question' or 'selected'
   const questionsType = searchParams.get('questions');
+  // console.log('questionsType', questionsType);
+  const [filteredData, setFilteredData] = useState(null);
 
-  // Num of pages
+  const getFilteredData = data => {
+    setFilteredData(data);
+    setCurrentPage(1);
+  };
+  const headers = Object.keys(checkedOptions).filter(
+    opt => checkedOptions[opt] === true,
+  );
+
   let numOfPages;
-  if (questionsType === 'allQuestions' || questionsType === undefined) {
+  if (filteredData && filteredData.length > 0) {
+    numOfPages = Math.ceil(filteredData.length / 10);
+  } else if (questionsType === 'allQuestions' || questionsType === undefined) {
     if (state.filteredData?.length > 0) {
       numOfPages = Math.ceil(state.filteredData.length / 10);
     } else {
@@ -57,10 +78,11 @@ const DisplayQuestions = ({ admin }) => {
   }
 
   // Data to be displayed in the table
-  // Slice the data from the array according to the page
   const dataSlice = currentPage - 1;
   let data;
-  if (state.filteredData.length > 0) {
+  if (filteredData && filteredData.length > 0) {
+    data = filteredData.slice(dataSlice * 10, currentPage * 10);
+  } else if (state.filteredData.length > 0) {
     data = state.filteredData.slice(dataSlice * 10, currentPage * 10);
   } else if (state.filteredData.length === 0 && state.filterExact) {
     data = [];
@@ -94,7 +116,7 @@ const DisplayQuestions = ({ admin }) => {
       if (checked) {
         setSelectedData(question);
       } else {
-        removeSelectedData(question.id); // Remove the question from selectedData
+        removeSelectedData(question.id);
       }
     }
   };
@@ -116,27 +138,37 @@ const DisplayQuestions = ({ admin }) => {
     return setCurrentPage(prev => prev + 1);
   };
 
-  // Table Headers
-  const headers = Object.keys(checkedOptions).filter(
-    opt => checkedOptions[opt] === true,
-  );
-
-  // Reset current page to one when changing between all questions and selected
   useEffect(() => {
     setCurrentPage(1);
-    setSelectAllChecked(false); // Reset the select all checkbox
-  }, [questionsType, state.filteredData]);
+    setSelectAllChecked(false);
+  }, [questionsType, state.filteredData, filteredData]);
 
-  // If the data is not arrived refetch
-  useEffect(() => {
-    if (state.searchResults.length === 0) {
-      queryClient.fetchQuery({ queryKey: ['all-questions'] });
-    }
-  }, [state.searchResults, queryClient]);
-  const [filteredData, setFilteredData] = useState(null);
+  const toggleBookmark = questionId => {
+    setBookmarkState(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId],
+    }));
+  };
+  const openNotesModal = async question => {
+    // setIsNotesModalOpen(true);
+    console.log('question', question);
+    searchParams.set('id', question.id);
+    setSearchParams(searchParams);
+    // try {
+    //   const username = localStorage.getItem('username');
+    //   const res = await getNotes({ username });
+    //   const allNotes = res.data.Notes;
+    //   console.log('dataa', allNotes);
 
-  const getFilteredData = data => {
-    setFilteredData(data);
+    //   const data = allNotes.find(item => {
+    //     return item.id === question.id;
+    //   });
+    //   setSelectedNote(data);
+    //   console.log('data', data);
+    //   console.log('seke', selectedNote);
+    // } catch (error) {
+    //   toast.error(error.message, { autoClose: 2000 });
+    // }
   };
 
   return (
@@ -170,6 +202,7 @@ const DisplayQuestions = ({ admin }) => {
                     {header}
                   </th>
                 ))}
+                <th className="px-3 py-2 text-start">Actions</th>
               </Table.Row>
             </Table.Head>
 
@@ -224,12 +257,36 @@ const DisplayQuestions = ({ admin }) => {
                       </Button>
                     </Table.Data>
                   )}
+                  <Table.Data className="mt-5 flex items-center gap-2">
+                    {/* Bookmark Icon */}
+                    <span
+                      onClick={() => toggleBookmark(dta.id)}
+                      className="cursor-pointer"
+                    >
+                      {bookmarkState[dta.id] ? (
+                        <FaBookmark color="orange" />
+                      ) : (
+                        <FaRegBookmark className="text-gray-400" />
+                      )}
+                    </span>
+                    {/* Notes Icon */}
+                    <div onClick={() => openNotesModal(dta)}>
+                      <Modal>
+                        <Modal.Open id="note">
+                          <TbNotes color="green" />
+                        </Modal.Open>
+                        <Modal.Window id="note" closeOnOverlay={true}>
+                          <NoteDetails />
+                        </Modal.Window>
+                      </Modal>
+                    </div>
+                  </Table.Data>
                 </Table.Row>
               ))}
             </Table.Body>
           </Table>
         </div>
-        {/* When no results were found */}
+
         {data.length === 0 && !isLoading && (
           <div className="my-16 flex justify-center">No result found!</div>
         )}
@@ -240,7 +297,6 @@ const DisplayQuestions = ({ admin }) => {
           </div>
         )}
 
-        {/* Pagination */}
         <div className="sticky bottom-0 flex flex-wrap items-center justify-between bg-gray-200 px-3 py-2">
           <button
             onClick={() => handlePages(false)}
@@ -250,20 +306,23 @@ const DisplayQuestions = ({ admin }) => {
             <HiArrowLeft />
             <span>Prev</span>
           </button>
-          {/* Current page */}
           <span className="font-[500] text-gray-500">
             Pages:{' '}
             {!totalResults || (!state.filteredData.length && state.filterExact)
               ? '0'
               : currentPage}{' '}
-            / {numOfPages}
+            /{' '}
+            {!totalResults || (!state.filteredData.length && state.filterExact)
+              ? '0'
+              : numOfPages}
           </span>
           <button
-            disabled={!totalResults || currentPage === numOfPages}
             onClick={() => handlePages(true)}
-            className="flex cursor-pointer  items-center gap-3 rounded-md px-3 py-2 font-[500] opacity-80 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!totalResults || currentPage === numOfPages}
+            className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 font-[500] opacity-80 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span>Next</span> <HiArrowRight />
+            <span>Next</span>
+            <HiArrowRight />
           </button>
         </div>
       </div>
