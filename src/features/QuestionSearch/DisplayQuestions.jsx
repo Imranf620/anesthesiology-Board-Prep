@@ -86,29 +86,26 @@ const DisplayQuestions = ({ admin }) => {
   const handleCheckboxChange = (event, question) => {
     const { checked, id } = event.target;
     setCheckedOptions(prev => ({
-        ...prev,
-        [id]: checked,
+      ...prev,
+      [id]: checked,
     }));
-  
+
     if (question) {
-        if (checked) {
-            setSelectedData(question);
-        } else {
-            removeSelectedData(question.id); // Remove the question from selectedData
-        }
+      if (checked) {
+        setSelectedData(question);
+      } else {
+        removeSelectedData(question.id); // Remove the question from selectedData
+      }
     }
-};
+  };
 
-
-  
-
-// const handleCheckboxChange = (event) => {
-//   const { id, checked } = event.target;
-//   setCheckedOptions(prev => ({
-//       ...prev,
-//       [id]: checked,
-//   }));
-// };
+  // const handleCheckboxChange = (event) => {
+  //   const { id, checked } = event.target;
+  //   setCheckedOptions(prev => ({
+  //       ...prev,
+  //       [id]: checked,
+  //   }));
+  // };
   // Function to handle pages
   const handlePages = next => {
     if (!next) {
@@ -121,8 +118,8 @@ const DisplayQuestions = ({ admin }) => {
 
   // Table Headers
   const headers = Object.keys(checkedOptions).filter(
-    opt => checkedOptions[opt] === true
-);
+    opt => checkedOptions[opt] === true,
+  );
 
   // Reset current page to one when changing between all questions and selected
   useEffect(() => {
@@ -136,9 +133,12 @@ const DisplayQuestions = ({ admin }) => {
       queryClient.fetchQuery({ queryKey: ['all-questions'] });
     }
   }, [state.searchResults, queryClient]);
+  const [filteredData, setFilteredData] = useState(null);
 
-  
- 
+  const getFilteredData = data => {
+    setFilteredData(data);
+  };
+
   return (
     <section className="bg-white px-3 pb-10 ">
       {/* Result Filter */}
@@ -146,10 +146,11 @@ const DisplayQuestions = ({ admin }) => {
         checkedOptions={checkedOptions}
         onCheckboxChange={handleCheckboxChange}
         admin={admin}
+        getFilteredData={getFilteredData}
       />
 
       {/* Data Table */}
-      <div className="mx-auto max-h-[80dvh] w-full min-w-[300px] overflow-hidden rounded-lg border-2 md:mt-20 border-gray-400">
+      <div className="mx-auto max-h-[80dvh] w-full min-w-[300px] overflow-hidden rounded-lg border-2 border-gray-400 md:mt-20">
         <div className="max-h-[70dvh] w-full overflow-auto">
           <Table className="w-full border-collapse overflow-auto">
             <Table.Head>
@@ -173,59 +174,58 @@ const DisplayQuestions = ({ admin }) => {
             </Table.Head>
 
             <Table.Body>
-              {data.length > 0 &&
-                data.map(dta => (
-                  <Table.Row key={`dta?.id`}>
-                    <Table.Data>
-                      <DisplayQuestionsItem
-                        question={dta}
-                        handleSelectQuestion={handleCheckboxChange}
-                        checked={state.selectedData.some(
-                          item => item.id === dta.id,
-                        )}
-                      />
+              {(filteredData && filteredData.length > 0
+                ? filteredData
+                : data
+              ).map(dta => (
+                <Table.Row key={dta.id}>
+                  <Table.Data>
+                    <DisplayQuestionsItem
+                      question={dta}
+                      handleSelectQuestion={handleCheckboxChange}
+                      checked={state.selectedData.some(
+                        item => item.id === dta.id,
+                      )}
+                    />
+                  </Table.Data>
+                  <Table.Data>
+                    <div className="flex items-center gap-2">{dta.id}</div>
+                  </Table.Data>
+                  {checkedOptions.topic && <Table.Data>{dta.Topic}</Table.Data>}
+                  {checkedOptions.chapter && (
+                    <Table.Data>{dta.Chapter}</Table.Data>
+                  )}
+                  {checkedOptions.Keywords && (
+                    <Table.Data>{dta.Keywords}</Table.Data>
+                  )}
+                  {(checkedOptions.Questions || checkedOptions.statement) && (
+                    <Table.Data
+                      className={
+                        dta.statement?.length > 60 ? 'text-[0.8rem]' : ''
+                      }
+                    >
+                      {dta.Statement}
                     </Table.Data>
+                  )}
+                  {admin && checkedOptions.status && (
                     <Table.Data>
-                      <div className="flex items-center gap-2">{dta.id}</div>
+                      {dta.isActive === 'Y' ? 'Active' : 'Not Active'}
                     </Table.Data>
-                    {checkedOptions.topic && (
-                      <Table.Data>{dta?.Topic}</Table.Data>
-                    )}
-                    {checkedOptions.chapter && (
-                      <Table.Data>{dta?.Chapter}</Table.Data>
-                    )}
-                    {checkedOptions.Keywords && (
-                      <Table.Data>{dta?.Keywords}</Table.Data>
-                    )}
-                    {(checkedOptions.Questions || checkedOptions.statement)  && (
-                      <Table.Data
-                        className={`${
-                          dta?.statement?.length > 60 ? 'text-[0.8rem]' : ''
-                        }`}
+                  )}
+                  {admin && checkedOptions.edit && (
+                    <Table.Data>
+                      <Button
+                        variant="underline"
+                        className="px-5 hover:shadow-lg"
+                        link
+                        to={`edit-question/${dta.id}`}
                       >
-                        {dta.Statement}
-                        
-                      </Table.Data>
-                    )}
-                    {admin && checkedOptions.status && (
-                      <Table.Data>
-                        {dta.isActive === 'Y' ? 'Active' : 'Not Active'}
-                      </Table.Data>
-                    )}
-                    {admin && checkedOptions.edit && (
-                      <Table.Data>
-                        <Button
-                          variant="underline"
-                          className="px-5 hover:shadow-lg"
-                          link
-                          to={`edit-question/${dta.id}`}
-                        >
-                          Edit
-                        </Button>
-                      </Table.Data>
-                    )}
-                  </Table.Row>
-                ))}
+                        Edit
+                      </Button>
+                    </Table.Data>
+                  )}
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
         </div>

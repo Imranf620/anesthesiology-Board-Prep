@@ -52,6 +52,8 @@ const QuestionsResultFilter = ({
   checkedOptions,
   setCheckedOptions,
   admin,
+  data,
+  getFilteredData,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showMenu, setShowMenu] = useState(false);
@@ -60,13 +62,16 @@ const QuestionsResultFilter = ({
   const [action, setAction] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [filteredData, setFilteredData] = useState(data);
 
   const ref = useOutsideClick(() => {
     setShowMenu(false);
     setShowActionMenu(false);
     setShowCategoryMenu(false);
   });
+
   const { state } = useSearchResultContext();
+  // console.log('state:', state);
   const optionsArr = Object.keys(checkedOptions);
 
   const handleSelectedOption = opt => {
@@ -82,16 +87,43 @@ const QuestionsResultFilter = ({
         return [...prevCategories, category];
       }
     });
+
+    // Log the data of the selected topic
+    const selectedTopicData = state.searchResults.filter(
+      item => item.Topic === category,
+    );
+    getFilteredData(selectedTopicData);
+    console.log('Selected Topic Data:', selectedTopicData);
   };
+
+  const filterTableData = () => {
+    if (!Array.isArray(data)) {
+      console.error('Data is not an array');
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
+      setFilteredData(data);
+    } else {
+      const filtered = data.filter(
+        item =>
+          selectedCategories.includes(item.chapter) ||
+          selectedCategories.includes(item.topic),
+      );
+      setFilteredData(filtered);
+    }
+  };
+
+  useEffect(() => {
+    filterTableData();
+  }, [selectedCategories, data]);
+
   const createTestBasedOnCategories = () => {
-    console.log('Creating test with categories:', selectedCategories);
     searchParams.set('categories', selectedCategories.join(','));
     setSearchParams(searchParams);
   };
 
   const handleAction = () => {
-    // Handle the action here (e.g., update the state or make an API call)
-    console.log(action);
     setAction('');
     setShowActionMenu(false);
   };
@@ -99,7 +131,7 @@ const QuestionsResultFilter = ({
   const handleSelectAll = e => {
     const isChecked = e.target.checked;
     setSelectAll(isChecked);
-    // Set all options to checked or unchecked
+
     const updatedCheckedOptions = optionsArr.reduce((acc, opt) => {
       acc[opt] = isChecked;
       return acc;
@@ -113,20 +145,24 @@ const QuestionsResultFilter = ({
   }, []);
 
   useEffect(() => {
-    // Update select all checkbox state based on individual checkboxes
     const allChecked = optionsArr.every(opt => checkedOptions[opt]);
     setSelectAll(allChecked);
   }, [checkedOptions]);
+
+  // Build a structure of chapters and their associated topics
+  const chapterMap = {};
+  state.searchResults.forEach(item => {
+    if (!chapterMap[item.Chapter]) {
+      chapterMap[item.Chapter] = new Set();
+    }
+    chapterMap[item.Chapter].add(item.Topic);
+  });
 
   return (
     <div className="mb-5 flex flex-wrap items-center justify-between gap-y-4 px-10 md:h-[70px]">
       <div className="flex items-center gap-4 self-stretch ">
         <div
-          className={`${
-            searchParams.get('questions') === 'allQuestions'
-              ? 'border-primary-500'
-              : 'border-transparent'
-          } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
+          className={`${searchParams.get('questions') === 'allQuestions' ? 'border-primary-500' : 'border-transparent'} cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
           onClick={() => handleSelectedOption('allQuestions')}
         >
           All Questions{' '}
@@ -136,11 +172,7 @@ const QuestionsResultFilter = ({
         </div>
         <div
           onClick={() => handleSelectedOption('selected')}
-          className={`${
-            searchParams.get('questions') === 'selected'
-              ? 'border-primary-500'
-              : 'border-transparent'
-          } cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500`}
+          className={`${searchParams.get('questions') === 'selected' ? 'border-primary-500' : 'border-transparent'} cursor-pointer border-b-4 pb-2 text-[1.1rem] font-[500] hover:border-primary-500 `}
         >
           Selected {state.selectedData.length}
         </div>
@@ -148,19 +180,17 @@ const QuestionsResultFilter = ({
       {!admin && (
         <div className="flex justify-end">
           <Button
-            // disabled={!keyword || isLoading}
             type="button"
             variant="dark"
             className="w-max text-[1rem]"
             onClick={createTestBasedOnCategories}
-            disabled={selectedCategories.length === 0}
+            disabled={state.selectedData.length === 0}
           >
             Create Test
           </Button>
         </div>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Select Columns to show */}
         <div className="relative">
           <button
             onClick={() => setShowMenu(prev => !prev)}
@@ -176,8 +206,6 @@ const QuestionsResultFilter = ({
               ref={ref}
               className="absolute bottom-0 z-30 flex w-[15rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
             >
-              {/* <CheckedInput disable={true} option="All Selected" />
-              <CheckedInput disable={true} option="Serial Number" /> */}
               {optionsArr.map(opt => (
                 <CheckedInput
                   key={opt}
@@ -209,25 +237,24 @@ const QuestionsResultFilter = ({
               >
                 <li
                   onClick={() => setAction('active')}
-                  className="flex  text-[1.1rem] capitalize cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-200 "
+                  className="flex cursor-pointer items-center gap-3 px-3 py-2 text-[1.1rem] capitalize hover:bg-primary-200"
                 >
                   Make it Active
                 </li>
                 <li
                   onClick={() => setAction('inactive')}
-                  className="flex  text-[1.1rem] capitalize cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-200"
+                  className="flex cursor-pointer items-center gap-3 px-3 py-2 text-[1.1rem] capitalize hover:bg-primary-200"
                 >
                   Make it Inactive
                 </li>
-                <div className="flex justify-end  px-3 py-2">
+                <div className="flex justify-end px-3 py-2">
                   <Button
                     onClick={handleAction}
-                    className='w-24 h-10'
-                   variant="dark"
+                    className="h-10 w-24"
+                    variant="dark"
                   >
                     Confirm
                   </Button>
-                  
                 </div>
               </ul>
             )}
@@ -249,59 +276,29 @@ const QuestionsResultFilter = ({
             {showCategoryMenu && (
               <ul
                 ref={ref}
-                className="absolute bottom-0 z-30 flex w-[18rem] translate-y-full flex-col rounded-md bg-white py-2 shadow-lg"
+                className="absolute bottom-0 z-30 flex max-h-48 w-[18rem] translate-y-full flex-col overflow-y-auto rounded-md bg-white py-2 shadow-lg"
               >
-                <li className="px-4 py-2">
-                  <span className="font-bold">Basic Sciences</span>
-                  <ul className="pl-4">
-                    <li
-                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anatomy') ? 'bg-primary-100' : ''}`}
-                      onClick={() => handleCategorySelection('Anatomy')}
+                {Object.keys(chapterMap).map(chapter => (
+                  <li key={chapter} className="px-4 py-2">
+                    <span
+                      className="font-bold"
+                      onClick={() => handleCategorySelection(topic)}
                     >
-                      Anatomy
-                    </li>
-                    <li
-                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Physics, Monitoring') ? 'bg-primary-100' : ''}`}
-                      onClick={() =>
-                        handleCategorySelection('Physics, Monitoring')
-                      }
-                    >
-                      Physics, Monitoring
-                    </li>
-                    <li
-                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Anesthesia Delivery Devices') ? 'bg-primary-100' : ''}`}
-                      onClick={() =>
-                        handleCategorySelection('Anesthesia Delivery Devices')
-                      }
-                    >
-                      Anesthesia Delivery Devices
-                    </li>
-                    <li
-                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Mathematics') ? 'bg-primary-100' : ''}`}
-                      onClick={() => handleCategorySelection('Mathematics')}
-                    >
-                      Mathematics
-                    </li>
-                    <li
-                      className={`py-1 hover:bg-primary-100 ${selectedCategories.includes('Pharmacology') ? 'bg-primary-100' : ''}`}
-                      onClick={() => handleCategorySelection('Pharmacology')}
-                    >
-                      Pharmacology
-                    </li>
-                  </ul>
-                </li>
-
-                <li className="px-4 py-2">
-                  <span className="font-bold">Clinical Sciences</span>
-                  <ul className="pl-4">
-                    <li className="py-1 hover:bg-primary-100">
-                      Regional Anesthesia
-                    </li>
-                    <li className="py-1 hover:bg-primary-100">
-                      Special Techniques
-                    </li>
-                  </ul>
-                </li>
+                      {chapter}
+                    </span>
+                    <ul className="pl-4">
+                      {[...chapterMap[chapter]].map(topic => (
+                        <li
+                          key={topic}
+                          onClick={() => handleCategorySelection(topic)}
+                          className="cursor-pointer px-2 py-1 hover:bg-primary-200"
+                        >
+                          {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
               </ul>
             )}
           </div>
